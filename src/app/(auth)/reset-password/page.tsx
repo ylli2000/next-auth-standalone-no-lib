@@ -25,7 +25,7 @@ export default function ResetPasswordPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-900 text-gray-100">
+        <div className="flex flex-col items-center justify-start py-8">
             <ResetPasswordForm token={token} onSuccess={handleSuccess} />
         </div>
     );

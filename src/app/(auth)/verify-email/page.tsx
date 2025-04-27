@@ -18,6 +18,7 @@ export default function VerifyEmailPage() {
 
     const handleSuccess = () => {
         // Could add additional logic here if needed
+        console.info('Email verified successfully');
     };
 
     const handleError = (error: string) => {
@@ -30,7 +31,7 @@ export default function VerifyEmailPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-start p-8 bg-gray-900 text-gray-100">
+        <div className="flex flex-col items-center justify-start py-8">
             <VerifyEmail token={token} onSuccess={handleSuccess} onError={handleError} />
         </div>
     );
