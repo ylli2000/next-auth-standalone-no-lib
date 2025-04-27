@@ -5,9 +5,9 @@ export async function createTestTransporter() {
     // Generate test SMTP service account from ethereal.email
     const testAccount = await nodemailer.createTestAccount();
 
-    console.log('Ethereal Email credentials:');
-    console.log('- Username:', testAccount.user);
-    console.log('- Password:', testAccount.pass);
+    console.info('Ethereal Email credentials:');
+    console.info('- Username:', testAccount.user);
+    console.info('- Password:', testAccount.pass);
 
     // Create a transporter using the test account
     return nodemailer.createTransport({
@@ -47,8 +47,8 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions): Promis
         // Get the preview URL
         const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;
 
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', previewUrl);
+        console.info('Message sent: %s', info.messageId);
+        console.info('Preview URL: %s', previewUrl);
 
         return {
             success: true,

@@ -67,7 +67,7 @@ export const verifyPasswordResetToken = (
             valid: true,
             payload
         };
-    } catch (error) {
+    } catch (_) {
         return { valid: false };
     }
 };
@@ -111,7 +111,7 @@ export const verifyEmailVerificationToken = (
             valid: true,
             payload
         };
-    } catch (error) {
+    } catch (_) {
         return { valid: false };
     }
 };

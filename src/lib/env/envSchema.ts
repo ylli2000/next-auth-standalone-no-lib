@@ -41,7 +41,7 @@ const processEnv = {
  */
 function validateEnv() {
     if (process.env.NODE_ENV !== 'production') {
-        console.log('🔍 Validating environment variables...');
+        console.info('🔍 Validating environment variables...');
     }
 
     const result = envSchema.safeParse(processEnv);

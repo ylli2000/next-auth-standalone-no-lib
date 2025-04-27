@@ -9,9 +9,9 @@ const db = drizzle(sql);
 
 // Run migrations
 async function main() {
-    console.log('Running migrations...');
+    console.info('Running migrations...');
     await migrate(db, { migrationsFolder: './src/lib/drizzle/migrations' });
-    console.log('Migrations completed!');
+    console.info('Migrations completed!');
     process.exit(0);
 }
 
