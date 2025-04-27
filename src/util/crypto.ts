@@ -71,3 +71,47 @@ export const verifyPasswordResetToken = (
         return { valid: false };
     }
 };
+
+export const generateEmailVerificationToken = (payload: { userId: string; email: string }) => {
+    // Create a JSON string from the payload
+    const data = JSON.stringify(payload);
+
+    // Generate a random token
+    const randomBytes = crypto.randomBytes(32).toString('hex');
+
+    // Create expiration time (24 hours from now)
+    const expiresAt = Date.now() + 86400000; // 24 hours in milliseconds
+
+    // Combine data, random bytes, and expiration into a JSON string
+    const tokenData = JSON.stringify({
+        data,
+        randomBytes,
+        expiresAt
+    });
+
+    // Base64 encode the token data
+    return Buffer.from(tokenData).toString('base64url');
+};
+
+export const verifyEmailVerificationToken = (
+    token: string
+): { valid: boolean; payload?: { userId: string; email: string } } => {
+    try {
+        // Decode the token
+        const tokenData = JSON.parse(Buffer.from(token, 'base64url').toString());
+
+        // Check if token has expired
+        if (tokenData.expiresAt < Date.now()) {
+            return { valid: false };
+        }
+
+        // Parse and return the payload
+        const payload = JSON.parse(tokenData.data);
+        return {
+            valid: true,
+            payload
+        };
+    } catch (error) {
+        return { valid: false };
+    }
+};

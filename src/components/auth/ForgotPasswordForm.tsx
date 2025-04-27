@@ -1,16 +1,15 @@
 'use client';
 
 import { useAuthStore } from '@/lib/store/authStore';
-import { PasswordResetRequestSchema, passwordResetRequestSchema } from '@/lib/validation/authSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordResetRequestValues, passwordResetRequestResolver } from '@/lib/validation/authSchema';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface ForgotPasswordFormProps {
-    onToggleForm?: () => void; // To go back to login form
+    onShowLogInForm?: () => void; // To go back to login form
 }
 
-export default function ForgotPasswordForm({ onToggleForm }: ForgotPasswordFormProps) {
+export default function ForgotPasswordForm({ onShowLogInForm }: ForgotPasswordFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -20,14 +19,14 @@ export default function ForgotPasswordForm({ onToggleForm }: ForgotPasswordFormP
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<PasswordResetRequestSchema>({
-        resolver: zodResolver(passwordResetRequestSchema),
+    } = useForm<PasswordResetRequestValues>({
+        resolver: passwordResetRequestResolver,
         defaultValues: {
             email: ''
         }
     });
 
-    const onSubmit = async (data: PasswordResetRequestSchema) => {
+    const onSubmit = async (data: PasswordResetRequestValues) => {
         setIsLoading(true);
         setErrorMessage(null);
         setSuccessMessage(null);
@@ -129,7 +128,7 @@ export default function ForgotPasswordForm({ onToggleForm }: ForgotPasswordFormP
 
             <p className="mt-4 text-center text-sm text-gray-400">
                 Remembered your password?{' '}
-                <button onClick={onToggleForm} className="text-blue-500 hover:underline">
+                <button onClick={onShowLogInForm} className="text-blue-500 hover:underline">
                     Back to login
                 </button>
             </p>
@@ -139,7 +138,7 @@ export default function ForgotPasswordForm({ onToggleForm }: ForgotPasswordFormP
                 <p className="font-medium">📝 Demo Mode Information</p>
                 <p className="mt-1">
                     In this demo, Ethereal Email is used instead of a real email service. Emails are not actually
-                    delivered to recipients' inboxes but can be viewed through the preview link that appears after
+                    delivered to recipients&apos; inboxes but can be viewed through the preview link that appears after
                     submission.
                 </p>
             </div>

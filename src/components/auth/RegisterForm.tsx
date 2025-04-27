@@ -1,16 +1,16 @@
 'use client';
 
 import { useAuthStore } from '@/lib/store/authStore';
-import { registerSchema } from '@/lib/validation/authSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { RegisterFormValues, registerFormResolver } from '@/lib/validation/authSchema';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+interface RegisterFormProps {
+    onShowLogInForm?: () => void; // For toggling to login form
+}
 
-export default function RegisterForm() {
+export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function RegisterForm() {
         handleSubmit,
         formState: { errors }
     } = useForm<RegisterFormValues>({
-        resolver: zodResolver(registerSchema),
+        resolver: registerFormResolver,
         defaultValues: {
             name: '',
             email: '',
@@ -44,7 +44,12 @@ export default function RegisterForm() {
             } else {
                 setSuccessMessage('Registration successful! You are being redirected...');
                 setTimeout(() => {
-                    redirect('/login');
+                    // If onShowLogInForm is provided, use it instead of redirect
+                    if (onShowLogInForm) {
+                        onShowLogInForm();
+                    } else {
+                        redirect('/');
+                    }
                 }, 2000);
             }
         } catch (error) {
@@ -78,7 +83,7 @@ export default function RegisterForm() {
                         id="name"
                         type="text"
                         {...register('name')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="John Doe"
                     />
                     {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
@@ -92,7 +97,7 @@ export default function RegisterForm() {
                         id="email"
                         type="email"
                         {...register('email')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="your@email.com"
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
@@ -106,7 +111,7 @@ export default function RegisterForm() {
                         id="password"
                         type="password"
                         {...register('password')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="••••••••"
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
@@ -120,7 +125,7 @@ export default function RegisterForm() {
                         id="confirmPassword"
                         type="password"
                         {...register('confirmPassword')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="••••••••"
                     />
                     {errors.confirmPassword && (
@@ -152,11 +157,11 @@ export default function RegisterForm() {
                 </button>
             </form>
 
-            <p className="mt-4 text-center text-sm">
+            <p className="mt-4 text-center text-sm text-gray-400">
                 Already have an account?{' '}
-                <a href="/login" className="text-blue-500 hover:underline">
+                <button onClick={onShowLogInForm} className="text-blue-500 hover:underline">
                     Log in
-                </a>
+                </button>
             </p>
         </div>
     );

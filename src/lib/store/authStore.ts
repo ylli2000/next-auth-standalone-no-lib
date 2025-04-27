@@ -1,9 +1,13 @@
 'use client';
 
-import { z } from 'zod';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { PasswordResetRequestSchema, PasswordResetSchema, loginSchema, registerSchema } from '../validation/authSchema';
+import {
+    LoginFormValues,
+    PasswordResetRequestValues,
+    PasswordResetValues,
+    RegisterFormValues
+} from '../validation/authSchema';
 
 export type User = {
     id: string;
@@ -12,20 +16,18 @@ export type User = {
     role: 'user' | 'admin';
 };
 
-export type LoginSchema = z.infer<typeof loginSchema>;
-export type RegisterSchema = z.infer<typeof registerSchema>;
 type AuthState = {
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
     error: string | null;
-    login: (data: LoginSchema) => Promise<void>;
-    register: (data: RegisterSchema) => Promise<void>;
+    login: (data: LoginFormValues) => Promise<void>;
+    register: (data: RegisterFormValues) => Promise<void>;
     logout: () => Promise<void>;
-    requestPasswordReset: (data: PasswordResetRequestSchema) => Promise<{ success: boolean; previewUrl?: string }>;
+    requestPasswordReset: (data: PasswordResetRequestValues) => Promise<{ success: boolean; previewUrl?: string }>;
     resetPassword: (
         token: string,
-        data: PasswordResetSchema
+        data: PasswordResetValues
     ) => Promise<{ success: boolean; message?: string; error?: string }>;
     resetAuthState: () => void;
 };

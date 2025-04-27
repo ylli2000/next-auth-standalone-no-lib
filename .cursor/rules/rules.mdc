@@ -27,8 +27,9 @@ alwaysApply: true
 - **Never assume missing context** ask questions if uncertain
 - **Never hallucinate libraries or functions** only use known, verified packages and functions calls
 - **Always confirm file paths, functions and module names** exist before referencing them in code or tests
-- **DO NOT automatically run dev** unless explicitly instructed to with keywords "run dev"
-- **Never delete or overwrite existing code** unless explicitly instructed to with keywords "modify, change, delete, remove"
+- **DO NOT automatically run dev, run lint, or run build** unless explicitly instructed to with keywords "dev, lint, build"
+- **DO NOT delete or modify existing code** unless it is directly related to the user's request
+- **Focus strictly at user's question** do not extend your scope to modify or delete anything not directly related
 - **DO NOT automatically push or commit** unless explicitly instructed to with keywords "push, commit"
 - **Use pnpm Package management** do not use npm
   

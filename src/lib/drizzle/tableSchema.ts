@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const userRoles = ['admin', 'user'] as const;
 export type UserRole = (typeof userRoles)[number];
@@ -12,6 +12,7 @@ export const userTable = pgTable('users', {
     email: text('email').notNull().unique(),
     password: text('password').notNull(),
     salt: text('salt').notNull(),
+    emailVerified: boolean('email_verified').notNull().default(false),
     role: userRoleEnum().notNull().default('user'),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true })

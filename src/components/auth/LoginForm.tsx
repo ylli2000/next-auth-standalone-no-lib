@@ -1,21 +1,17 @@
 'use client';
 
 import { useAuthStore } from '@/lib/store/authStore';
-import { loginSchema } from '@/lib/validation/authSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormValues, loginFormResolver } from '@/lib/validation/authSchema';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-type LoginSchema = z.infer<typeof loginSchema>;
 
 interface LoginFormProps {
-    onToggleForm?: () => void;
-    onForgotPassword?: () => void;
+    onShowRegisterForm?: () => void; // For toggling to register form
+    onForgotPassword?: () => void; // For toggling to forgot password form
 }
 
-export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormProps) {
+export default function LogInForm({ onShowRegisterForm, onForgotPassword }: LoginFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -23,15 +19,15 @@ export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormP
         register,
         handleSubmit,
         formState: { errors }
-    } = useForm<LoginSchema>({
-        resolver: zodResolver(loginSchema),
+    } = useForm<LoginFormValues>({
+        resolver: loginFormResolver,
         defaultValues: {
             email: '',
             password: ''
         }
     });
 
-    const onSubmit = async (data: LoginSchema) => {
+    const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
         setErrorMessage(null);
 
@@ -65,7 +61,7 @@ export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormP
                         id="email"
                         type="email"
                         {...register('email')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="your@email.com"
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
@@ -79,7 +75,7 @@ export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormP
                         id="password"
                         type="password"
                         {...register('password')}
-                        className="w-full rounded-md border px-3 py-2"
+                        className="w-full rounded-md border px-3 py-2 text-gray-900"
                         placeholder="••••••••"
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
@@ -93,19 +89,9 @@ export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormP
                         </label>
                     </div>
 
-                    {onForgotPassword ? (
-                        <button
-                            type="button"
-                            onClick={onForgotPassword}
-                            className="text-sm text-blue-500 hover:underline"
-                        >
-                            Forgot password?
-                        </button>
-                    ) : (
-                        <a href="/forgot-password" className="text-sm text-blue-500 hover:underline">
-                            Forgot password?
-                        </a>
-                    )}
+                    <button type="button" onClick={onForgotPassword} className="text-sm text-blue-500 hover:underline">
+                        Forgot password?
+                    </button>
                 </div>
 
                 <button
@@ -119,7 +105,7 @@ export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormP
 
             <p className="text-center text-sm text-gray-400 mt-4">
                 Don&apos;t have an account?{' '}
-                <button onClick={onToggleForm} className="text-blue-500 hover:underline">
+                <button onClick={onShowRegisterForm} className="text-blue-500 hover:underline">
                     Sign up
                 </button>
             </p>
