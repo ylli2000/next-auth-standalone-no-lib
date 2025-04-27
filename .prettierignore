@@ -1,0 +1,25 @@
+# Build artifacts
+.next/
+out/
+build/
+dist/
+
+# Node modules
+node_modules/
+
+# Log files
+*.log
+
+# Coverage directory
+coverage/
+
+# Environment files
+.env
+.env.*
+
+# Cache
+.cache/
+.cursor/
+
+# Generated files
+*.generated.* 

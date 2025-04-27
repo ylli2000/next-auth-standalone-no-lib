@@ -1,0 +1,23 @@
+# Build artifacts
+.next/
+out/
+build/
+dist/
+
+# Node modules
+node_modules/
+
+# Configuration files
+*.config.js
+*.config.mjs
+tailwind.config.js
+postcss.config.js
+next.config.js
+
+# Generated files
+*.generated.*
+next-env.d.ts
+
+# Cache
+.cache/
+.cursor/ 
