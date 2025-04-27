@@ -1,4 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+
+// Common password validation schema for reuse
+const passwordValidation = z
+    .string()
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .max(100, { message: 'Password must be less than 100 characters' })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+        message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    });
 
 // Registration form schema
 export const registerSchema = z
@@ -8,13 +18,7 @@ export const registerSchema = z
             .min(2, { message: 'Name must be at least 2 characters' })
             .max(50, { message: 'Name must be less than 50 characters' }),
         email: z.string().email({ message: 'Please enter a valid email address' }),
-        password: z
-            .string()
-            .min(8, { message: 'Password must be at least 8 characters' })
-            .max(100, { message: 'Password must be less than 100 characters' })
-            .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-                message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-            }),
+        password: passwordValidation,
         confirmPassword: z.string(),
         terms: z.boolean().refine((data) => data, {
             message: 'You must agree to the terms and conditions'
@@ -51,16 +55,17 @@ export const passwordResetRequestSchema = z.object({
     email: z.string().email({ message: 'Please enter a valid email address' })
 });
 
-// Password reset schema
+// Email verification token schema
+export const emailVerificationSchema = z.object({
+    token: z.string().min(1, { message: 'Email verification token is required' })
+});
+
+// Password reset token schema (for API usage - combines passwordResetSchema with token)
+// We're creating a new schema instead of extending to avoid TypeScript issues
 export const passwordResetSchema = z
     .object({
-        password: z
-            .string()
-            .min(8, { message: 'Password must be at least 8 characters' })
-            .max(100, { message: 'Password must be less than 100 characters' })
-            .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-                message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-            }),
+        token: z.string().min(1, { message: 'Password reset token is required' }),
+        password: passwordValidation,
         confirmPassword: z.string()
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -73,3 +78,11 @@ export type RegisterFormValues = z.infer<typeof registerSchema>;
 export type LoginFormValues = z.infer<typeof loginSchema>;
 export type PasswordResetRequestValues = z.infer<typeof passwordResetRequestSchema>;
 export type PasswordResetValues = z.infer<typeof passwordResetSchema>;
+export type EmailVerificationValues = z.infer<typeof emailVerificationSchema>;
+
+// Export form resolvers for convenience
+export const registerFormResolver = zodResolver(registerSchema);
+export const loginFormResolver = zodResolver(loginSchema);
+export const passwordResetRequestResolver = zodResolver(passwordResetRequestSchema);
+export const passwordResetResolver = zodResolver(passwordResetSchema);
+export const emailVerificationResolver = zodResolver(emailVerificationSchema);

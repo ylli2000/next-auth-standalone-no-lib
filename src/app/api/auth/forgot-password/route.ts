@@ -2,19 +2,15 @@ import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { sendEmail } from '@/lib/email/emailService';
 import { getPasswordResetEmailTemplate } from '@/lib/email/templates';
+import { passwordResetRequestSchema } from '@/lib/validation/authSchema';
 import { generatePasswordResetToken } from '@/util/crypto';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-
-const requestSchema = z.object({
-    email: z.string().email({ message: 'Please enter a valid email address' })
-});
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const validatedData = requestSchema.parse(body);
+        const validatedData = passwordResetRequestSchema.parse(body);
 
         // Find user by email
         const user = await db.query.userTable.findFirst({
@@ -26,7 +22,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 {
                     message: 'If an account with that email exists, a password reset link has been sent.',
-                    // For demo purposes only - would NOT include this in production
+                    //TODO: For demo purposes only - would NOT include this in production
                     demo: "User not found, but we don't tell the client that for security reasons."
                 },
                 { status: 200 }
@@ -56,12 +52,12 @@ export async function POST(request: NextRequest) {
         });
 
         if (emailResult.success) {
-            // In a real app, you wouldn't include the preview URL in the response
+            //TODO: In a real app, you wouldn't include the preview URL in the response
             // But for a demo project, this is helpful to see the email that would be sent
             return NextResponse.json(
                 {
                     message: 'If an account with that email exists, a password reset link has been sent.',
-                    // For demo purposes only!
+                    //TODO: For demo purposes only!
                     demoPreviewUrl: emailResult.previewUrl,
                     demoMessage: 'This is an Ethereal email preview link. In production, a real email would be sent.'
                 },

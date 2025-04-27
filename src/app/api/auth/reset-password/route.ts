@@ -1,26 +1,15 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
+import { passwordResetSchema } from '@/lib/validation/authSchema';
 import { generateSalt, hashPassword, verifyPasswordResetToken } from '@/util/crypto';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-// API specific schema for password reset
-const resetPasswordAPISchema = z.object({
-    token: z.string().min(1, { message: 'Reset token is required' }),
-    password: z
-        .string()
-        .min(8, { message: 'Password must be at least 8 characters' })
-        .max(100, { message: 'Password must be less than 100 characters' })
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-            message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-        })
-});
-
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const validatedData = resetPasswordAPISchema.parse(body);
+        const validatedData = passwordResetSchema.parse(body);
 
         // Verify token
         const tokenResult = verifyPasswordResetToken(validatedData.token);
