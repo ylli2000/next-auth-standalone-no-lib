@@ -7,9 +7,15 @@ import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
 type LoginSchema = z.infer<typeof loginSchema>;
 
-export default function LogInForm() {
+interface LoginFormProps {
+    onToggleForm?: () => void;
+    onForgotPassword?: () => void;
+}
+
+export default function LogInForm({ onToggleForm, onForgotPassword }: LoginFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -87,9 +93,19 @@ export default function LogInForm() {
                         </label>
                     </div>
 
-                    <a href="/forgot-password" className="text-sm text-blue-500 hover:underline">
-                        Forgot password?
-                    </a>
+                    {onForgotPassword ? (
+                        <button
+                            type="button"
+                            onClick={onForgotPassword}
+                            className="text-sm text-blue-500 hover:underline"
+                        >
+                            Forgot password?
+                        </button>
+                    ) : (
+                        <a href="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                            Forgot password?
+                        </a>
+                    )}
                 </div>
 
                 <button
@@ -101,11 +117,11 @@ export default function LogInForm() {
                 </button>
             </form>
 
-            <p className="mt-4 text-center text-sm">
-                Don't have an account?{' '}
-                <a href="/register" className="text-blue-500 hover:underline">
+            <p className="text-center text-sm text-gray-400 mt-4">
+                Don&apos;t have an account?{' '}
+                <button onClick={onToggleForm} className="text-blue-500 hover:underline">
                     Sign up
-                </a>
+                </button>
             </p>
         </div>
     );
