@@ -1,15 +1,15 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
-import { emailVerificationSchema } from '@/lib/validation/authSchema';
+import { emailVerificationFormSchema } from '@/lib/validation/authSchema';
 import { verifyEmailVerificationToken } from '@/util/crypto';
+import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const validatedData = emailVerificationSchema.parse(body);
+        const validatedData = emailVerificationFormSchema.parse(body);
         const { token } = validatedData;
 
         // Verify token
@@ -45,11 +45,6 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ message: 'Email verified successfully' }, { status: 200 });
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ error: error.errors }, { status: 400 });
-        }
-
-        console.error('Email verification error:', error);
-        return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+        return handleApiError(error);
     }
 }

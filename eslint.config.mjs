@@ -1,4 +1,5 @@
 import { FlatCompat } from '@eslint/eslintrc';
+import pluginNext from '@next/eslint-plugin-next';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import prettierConfig from 'eslint-config-prettier';
@@ -55,14 +56,18 @@ const eslintConfig = [
             }
         },
         plugins: {
+            '@next/next': pluginNext,
             '@typescript-eslint': typescript,
             prettier: prettierPlugin
         },
         rules: {
+            ...pluginNext.configs.recommended.rules,
+            ...pluginNext.configs['core-web-vitals'].rules,
+
             // TypeScript specific rules
             '@typescript-eslint/explicit-function-return-type': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
-            '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
 
             // Prettier integration
             'prettier/prettier': 'warn',

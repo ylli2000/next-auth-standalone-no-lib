@@ -1,15 +1,15 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
-import { passwordResetSchema } from '@/lib/validation/authSchema';
+import { passwordResetApiSchema } from '@/lib/validation/authSchema';
 import { generateSalt, hashPassword, verifyPasswordResetToken } from '@/util/crypto';
+import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const validatedData = passwordResetSchema.parse(body);
+        const validatedData = passwordResetApiSchema.parse(body);
 
         // Verify token
         const tokenResult = verifyPasswordResetToken(validatedData.token);
@@ -60,12 +60,6 @@ export async function POST(request: NextRequest) {
             { status: 200 }
         );
     } catch (error) {
-        console.error('Password reset error:', error);
-
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-        }
-
-        return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+        return handleApiError(error);
     }
 }

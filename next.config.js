@@ -3,9 +3,16 @@ const nextConfig = {
     output: 'standalone',
     // Disable static error page generation
     useFileSystemPublicRoutes: true,
-    // Reduce these to essentials
+    // Configure images
     images: {
-        unoptimized: true
+        unoptimized: true,
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'ui-avatars.com',
+                pathname: '/api/**'
+            }
+        ]
     },
     // Add ESLint configuration
     eslint: {

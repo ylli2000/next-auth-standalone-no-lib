@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
+        "dev": "next dev",
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
@@ -14,7 +14,8 @@
         "db:generate": "drizzle-kit generate --config=./src/lib/drizzle/config.ts",
         "db:push": "drizzle-kit push --config=./src/lib/drizzle/config.ts",
         "db:migrate": "dotenv -- tsx src/lib/drizzle/migrate.ts",
-        "prepare": "husky"
+        "prepare": "husky",
+        "clean": "rm -rf .next node_modules/.cache .turbo"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.0.1",
@@ -28,12 +29,14 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-hook-form": "^7.56.1",
+        "react-hot-toast": "^2.5.2",
         "uuid": "^11.1.0",
         "zod": "^3.24.3",
         "zustand": "^5.0.3"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@next/eslint-plugin-next": "^15.3.1",
         "@tailwindcss/postcss": "^4",
         "@types/node": "^20",
         "@types/nodemailer": "^6.4.17",

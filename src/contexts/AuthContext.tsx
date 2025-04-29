@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuthStore, User } from '@/lib/store/authStore';
-import { LoginFormValues, RegisterFormValues } from '@/lib/validation/authSchema';
+import { AuthResponse, LoginFormValues, RegisterFormValues } from '@/lib/validation/authSchema';
 import { createContext, ReactNode, useContext, useEffect } from 'react';
 
 type AuthContextType = {
@@ -10,7 +10,7 @@ type AuthContextType = {
     isLoading: boolean;
     error: string | null;
     login: (loginFormValues: LoginFormValues) => Promise<void>;
-    register: (registerFormValues: RegisterFormValues) => Promise<void>;
+    register: (registerFormValues: RegisterFormValues) => Promise<AuthResponse>;
     logout: () => Promise<void>;
     resetAuthState: () => void;
 };

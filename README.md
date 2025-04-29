@@ -73,3 +73,56 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Next.js Auth Standalone
+
+A standalone Next.js authentication system without external auth libraries.
+
+## Development
+
+```bash
+pnpm install
+pnpm dev
+```
+
+### Development Server Options
+
+By default, the project uses the standard Next.js development server (Webpack-based). This provides a stable development experience with reliable hot reloading.
+
+If the project grows larger and you notice slower development server performance, you can use Turbopack for faster builds:
+
+```bash
+pnpm dev -- --turbo
+```
+
+Note: Turbopack is still experimental and may have caching issues. If you experience stale builds or unexpected behavior, try:
+
+1. Stop the dev server
+2. Run `pnpm clean` to clear caches
+3. Restart the dev server
+
+## Database
+
+```bash
+pnpm db:push
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+DATABASE_URL=postgres://user:password@localhost:5432/dbname
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=http://localhost:3000
+```
+
+## Features
+
+- Email/Password authentication
+- Password reset flow
+- Email verification
+- Protected routes
+- Form validation with Zod
+- Type-safe database queries with Drizzle ORM
+- Modern UI with Tailwind CSS

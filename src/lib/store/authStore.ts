@@ -3,10 +3,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {
+    AuthResponse,
+    EmailVerificationFormValues,
     LoginFormValues,
-    PasswordResetRequestValues,
-    PasswordResetValues,
-    RegisterFormValues
+    PasswordResetFormValues,
+    PasswordResetRequestFormValues,
+    RegisterApiValues,
+    RegisterFormValues,
+    UpdateProfileFormValues
 } from '../validation/authSchema';
 
 export type User = {
@@ -21,15 +25,16 @@ type AuthState = {
     isAuthenticated: boolean;
     isLoading: boolean;
     error: string | null;
+    rememberMe: boolean;
     login: (data: LoginFormValues) => Promise<void>;
-    register: (data: RegisterFormValues) => Promise<void>;
+    register: (data: RegisterFormValues) => Promise<AuthResponse>;
     logout: () => Promise<void>;
-    requestPasswordReset: (data: PasswordResetRequestValues) => Promise<{ success: boolean; previewUrl?: string }>;
-    resetPassword: (
-        token: string,
-        data: PasswordResetValues
-    ) => Promise<{ success: boolean; message?: string; error?: string }>;
+    updateProfile: (data: UpdateProfileFormValues) => Promise<void>;
+    requestPasswordReset: (data: PasswordResetRequestFormValues) => Promise<AuthResponse>;
+    resetPassword: (token: string, data: PasswordResetFormValues) => Promise<AuthResponse>;
+    verifyEmail: (data: EmailVerificationFormValues) => Promise<AuthResponse>;
     resetAuthState: () => void;
+    setRememberMe: (remember: boolean) => void;
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -39,132 +44,105 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: false,
             isLoading: false,
             error: null,
+            rememberMe: false,
+
+            setRememberMe: (remember) => set({ rememberMe: remember }),
 
             login: async ({ email, password }) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await fetch('/api/auth/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password })
-                    });
+                    const result = await fetchApi<LoginFormValues, { user: User }>(
+                        '/api/auth/login',
+                        'POST',
+                        { email, password },
+                        'Login failed'
+                    );
 
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || 'Login failed');
-                    }
-
-                    const user = await response.json();
-                    set({ user, isAuthenticated: true, isLoading: false });
+                    set({ user: result.user, isAuthenticated: true, isLoading: false });
                 } catch (error) {
-                    set({
-                        error: error instanceof Error ? error.message : 'Login failed',
-                        isLoading: false
-                    });
+                    handleAuthError(error, set, 'Login failed');
                 }
             },
 
             register: async ({ name, email, password }) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await fetch('/api/auth/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ name, email, password })
-                    });
+                    // Only send the fields that the API needs
+                    const apiData: RegisterApiValues = { name, email, password };
+                    const result = await fetchApi<RegisterApiValues, { user: User; demoPreviewUrl?: string }>(
+                        '/api/auth/register',
+                        'POST',
+                        apiData,
+                        'Registration failed'
+                    );
 
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || 'Registration failed');
-                    }
-
-                    const user = await response.json();
-                    set({ user, isAuthenticated: true, isLoading: false });
+                    set({ user: result.user, isAuthenticated: true, isLoading: false });
+                    console.info('User registered:', result.user);
+                    return {
+                        success: true,
+                        previewUrl: result.demoPreviewUrl // For demo purposes with Ethereal
+                    };
                 } catch (error) {
-                    set({
-                        error: error instanceof Error ? error.message : 'Registration failed',
-                        isLoading: false
-                    });
+                    return handleAuthError(error, set, 'Registration failed');
                 }
             },
 
             logout: async () => {
                 set({ isLoading: true });
                 try {
-                    await fetch('/api/auth/logout', {
-                        method: 'POST'
-                    });
+                    await fetchApi('/api/auth/logout', 'POST');
                     set({ user: null, isAuthenticated: false, isLoading: false, error: null });
                 } catch (error) {
-                    set({
-                        error: error instanceof Error ? error.message : 'Logout failed',
-                        isLoading: false
-                    });
+                    handleAuthError(error, set, 'Logout failed');
+                }
+            },
+
+            updateProfile: async (data) => {
+                set({ isLoading: true, error: null });
+                try {
+                    const result = await fetchApi<UpdateProfileFormValues, { user: User }>(
+                        '/api/auth/me',
+                        'POST',
+                        data,
+                        'Profile update failed'
+                    );
+
+                    set({ user: result.user, isLoading: false });
+                } catch (error) {
+                    handleAuthError(error, set, 'Profile update failed');
                 }
             },
 
             requestPasswordReset: async ({ email }) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await fetch('/api/auth/forgot-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email })
-                    });
-
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        set({
-                            error: result.error || 'Password reset request failed',
-                            isLoading: false
-                        });
-                        return { success: false };
-                    }
+                    const result = await fetchApi<PasswordResetRequestFormValues, { demoPreviewUrl?: string }>(
+                        '/api/auth/forgot',
+                        'POST',
+                        { email },
+                        'Password reset request failed'
+                    );
 
                     set({ isLoading: false });
+                    console.info('Password reset request successful:', result);
                     return {
                         success: true,
                         previewUrl: result.demoPreviewUrl // For demo purposes with Ethereal
                     };
                 } catch (error) {
-                    set({
-                        error: error instanceof Error ? error.message : 'Password reset request failed',
-                        isLoading: false
-                    });
-                    return { success: false };
+                    return handleAuthError(error, set, 'Password reset request failed');
                 }
             },
 
             resetPassword: async (token, { password }) => {
                 set({ isLoading: true, error: null });
                 try {
-                    const response = await fetch('/api/auth/reset-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ token, password })
-                    });
-
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        set({
-                            error: result.error || 'Password reset failed',
-                            isLoading: false
-                        });
-                        return {
-                            success: false,
-                            error: result.error || 'Password reset failed'
-                        };
-                    }
+                    const result = await fetchApi<{ token: string; password: string }, { message?: string }>(
+                        '/api/auth/reset',
+                        'POST',
+                        { token, password },
+                        'Password reset failed'
+                    );
 
                     set({ isLoading: false });
                     return {
@@ -172,15 +150,27 @@ export const useAuthStore = create<AuthState>()(
                         message: result.message || 'Password has been reset successfully'
                     };
                 } catch (error) {
-                    const errorMessage = error instanceof Error ? error.message : 'Password reset failed';
-                    set({
-                        error: errorMessage,
-                        isLoading: false
-                    });
+                    return handleAuthError(error, set, 'Password reset failed');
+                }
+            },
+
+            verifyEmail: async ({ token }) => {
+                set({ isLoading: true, error: null });
+                try {
+                    const result = await fetchApi<EmailVerificationFormValues, { message?: string }>(
+                        '/api/auth/verify',
+                        'POST',
+                        { token },
+                        'Email verification failed'
+                    );
+
+                    set({ isLoading: false });
                     return {
-                        success: false,
-                        error: errorMessage
+                        success: true,
+                        message: result.message || 'Email verified successfully!'
                     };
+                } catch (error) {
+                    return handleAuthError(error, set, 'Email verification failed');
                 }
             },
 
@@ -190,8 +180,79 @@ export const useAuthStore = create<AuthState>()(
         }),
         {
             name: 'auth-storage',
-            // We'll only store the user in localStorage (not sensitive data)
-            partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated })
+            // We'll only store the user and rememberMe in localStorage
+            partialize: (state) => ({
+                user: state.user,
+                isAuthenticated: state.isAuthenticated,
+                rememberMe: state.rememberMe
+            })
         }
     )
 );
+
+/**
+ * Helper function to handle common error patterns in auth functions
+ */
+
+type SetFunction = (state: Partial<AuthState>) => void;
+
+const handleAuthError = (
+    error: unknown,
+    set: SetFunction,
+    defaultMessage: string,
+    logPrefix?: string
+): { success: false; error: string } => {
+    const errorMessage = error instanceof Error ? error.message : defaultMessage;
+
+    // Update state
+    set({
+        error: errorMessage,
+        isLoading: false
+    });
+
+    // Log error if prefix provided
+    if (logPrefix) {
+        console.error(`${logPrefix}:`, errorMessage);
+    }
+
+    // Return standardized error response
+    return {
+        success: false,
+        error: errorMessage
+    };
+};
+
+/**
+ * Helper function to make authenticated API requests
+ * @param endpoint The API endpoint to call
+ * @param method HTTP method
+ * @param data Request payload data
+ * @param errorMessage Default error message if no error is provided by the API
+ * @returns Response data
+ */
+const fetchApi = async <T, R>(
+    endpoint: string,
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST',
+    data?: T,
+    errorMessage: string = 'Request failed'
+): Promise<R> => {
+    const options: RequestInit = {
+        method,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    if (data) {
+        options.body = JSON.stringify(data);
+    }
+
+    const response = await fetch(endpoint, options);
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.error || errorMessage);
+    }
+
+    return result;
+};

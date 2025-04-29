@@ -2,18 +2,18 @@ import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { sendEmail } from '@/lib/email/emailService';
 import { getEmailVerificationEmailTemplate } from '@/lib/email/templates';
-import { registerSchema } from '@/lib/validation/authSchema';
+import { registerApiSchema } from '@/lib/validation/authSchema';
 import { generateEmailVerificationToken, generateSalt, hashPassword } from '@/util/crypto';
+import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
     try {
         // Parse and validate the request body
         const body = await request.json();
 
-        const validatedData = registerSchema.parse(body);
+        const validatedData = registerApiSchema.parse(body);
         const { name, email, password } = validatedData;
 
         // Check if user already exists
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
                 email,
                 password: hashedPassword,
                 role: 'user',
-                salt
+                salt,
+                emailVerified: false
             })
             .returning();
 
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Create verification link
-        const verificationLink = `${request.nextUrl.origin}/verify-email?token=${token}`;
+        const verificationLink = `${request.nextUrl.origin}/verify?token=${token}`;
 
         // Create email content
         const emailHtml = getEmailVerificationEmailTemplate(newUser.name || 'there', verificationLink);
@@ -65,23 +66,19 @@ export async function POST(request: NextRequest) {
 
         // Return the user (excluding sensitive data)
         const { password: _, salt: __, ...userWithoutSensitiveData } = newUser;
-
+        //TODO: In a real app, you wouldn't include the preview URL in the response
+        // But for a demo project, this is helpful to see the email that would be sent
         return NextResponse.json(
             {
-                ...userWithoutSensitiveData,
-                //TODO: For demo purposes only
-                emailSent: emailResult.success,
-                emailPreviewUrl: emailResult.previewUrl,
+                user: userWithoutSensitiveData,
+                //TODO: For demo purposes only!
+                demoPreviewUrl: emailResult.previewUrl,
                 message: 'Registration successful. Please check your email to verify your account.'
             },
             { status: 201 }
         );
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ error: error.errors }, { status: 400 });
-        }
-
         console.error('Registration error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return handleApiError(error);
     }
 }

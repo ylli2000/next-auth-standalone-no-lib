@@ -1,0 +1,110 @@
+'use client';
+
+import { Button } from '@/components/common/Button';
+import { useAuthStore } from '@/lib/store/authStore';
+import { UserPasswordUpdateFormValues, userPasswordUpdateResolver } from '@/lib/validation/authSchema';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+
+interface UserResetPasswordProps {
+    isEditing: boolean;
+    setIsEditing: (isEditing: boolean) => void;
+    onEditStart: () => void;
+}
+
+export default function UserResetPassword({ isEditing, setIsEditing, onEditStart }: UserResetPasswordProps) {
+    const { updateProfile, isLoading } = useAuthStore();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isValid }
+    } = useForm<UserPasswordUpdateFormValues>({
+        resolver: userPasswordUpdateResolver,
+        mode: 'onChange'
+    });
+
+    const onSubmit = async (data: UserPasswordUpdateFormValues) => {
+        try {
+            await updateProfile({ password: data.password });
+            toast.success('Password updated successfully');
+            setIsEditing(false);
+            reset();
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : 'Failed to update password');
+        }
+    };
+
+    const handleEditStart = () => {
+        onEditStart();
+        setIsEditing(true);
+    };
+
+    if (!isEditing) {
+        return (
+            <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium text-white">Password</h3>
+                <Button variant="primary" onClick={handleEditStart} disabled={isLoading}>
+                    Change Password
+                </Button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium text-white">Change Password</h3>
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                        setIsEditing(false);
+                        reset();
+                    }}
+                    disabled={isLoading}
+                >
+                    Cancel
+                </Button>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">New Password</label>
+                        <input
+                            type="password"
+                            {...register('password')}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            disabled={isLoading}
+                            maxLength={100}
+                            placeholder="••••••••"
+                        />
+                        {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Confirm New Password</label>
+                        <input
+                            type="password"
+                            {...register('confirmPassword')}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            disabled={isLoading}
+                            maxLength={100}
+                            placeholder="••••••••"
+                        />
+                        {errors.confirmPassword && (
+                            <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-700">
+                    <Button type="submit" variant="primary" disabled={isLoading || !isValid}>
+                        {isLoading ? 'Updating...' : 'Update Password'}
+                    </Button>
+                </div>
+            </form>
+        </div>
+    );
+}

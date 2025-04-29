@@ -1,19 +1,21 @@
 'use client';
 
+import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/lib/store/authStore';
 import { LoginFormValues, loginFormResolver } from '@/lib/validation/authSchema';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface LoginFormProps {
     onShowRegisterForm?: () => void; // For toggling to register form
-    onForgotPassword?: () => void; // For toggling to forgot password form
+    onForgotPassword?: () => void; // For handling forgot password
 }
 
-export default function LogInForm({ onShowRegisterForm, onForgotPassword }: LoginFormProps) {
+export default function LoginForm({ onShowRegisterForm, onForgotPassword }: LoginFormProps) {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const { login, rememberMe, setRememberMe } = useAuthStore();
 
     const {
         register,
@@ -29,16 +31,11 @@ export default function LogInForm({ onShowRegisterForm, onForgotPassword }: Logi
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
-        setErrorMessage(null);
-
         try {
-            const { login, error } = useAuthStore.getState();
             await login(data);
-            if (error) setErrorMessage(error);
-            redirect('/');
+            router.push('/'); // Redirect to home after successful login
         } catch (error) {
-            setErrorMessage('An unexpected error occurred. Please try again.');
-            console.error(error);
+            console.error('Login failed:', error);
         } finally {
             setIsLoading(false);
         }
@@ -46,69 +43,69 @@ export default function LogInForm({ onShowRegisterForm, onForgotPassword }: Logi
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Log In</h2>
+            <h2 className="text-2xl font-bold mb-6">Welcome Back</h2>
 
-            {errorMessage && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">{errorMessage}</div>
-            )}
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                    <label htmlFor="email" className="block mb-2 text-sm font-medium">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
                         Email
                     </label>
                     <input
                         id="email"
                         type="email"
                         {...register('email')}
-                        className="w-full rounded-md border px-3 py-2 text-gray-900"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                         placeholder="your@email.com"
+                        disabled={isLoading}
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block mb-2 text-sm font-medium">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
                         Password
                     </label>
                     <input
                         id="password"
                         type="password"
                         {...register('password')}
-                        className="w-full rounded-md border px-3 py-2 text-gray-900"
+                        className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                         placeholder="••••••••"
+                        disabled={isLoading}
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
                 </div>
 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <input id="remember-me" type="checkbox" className="h-4 w-4 rounded" />
-                        <label htmlFor="remember-me" className="ml-2 text-sm">
+                        <input
+                            id="remember-me"
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-800"
+                            disabled={isLoading}
+                        />
+                        <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
                             Remember me
                         </label>
                     </div>
-
                     <button type="button" onClick={onForgotPassword} className="text-sm text-blue-500 hover:underline">
-                        Forgot password?
+                        Forgot your password?
                     </button>
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                >
-                    {isLoading ? 'Logging in...' : 'Log In'}
-                </button>
-            </form>
+                <Button type="submit" variant="primary" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Signing in...' : 'Sign In'}
+                </Button>
 
-            <p className="text-center text-sm text-gray-400 mt-4">
-                Don&apos;t have an account?{' '}
-                <button onClick={onShowRegisterForm} className="text-blue-500 hover:underline">
-                    Sign up
-                </button>
-            </p>
+                <p className="text-center text-sm text-gray-400">
+                    Do not have an account?{' '}
+                    <button type="button" onClick={onShowRegisterForm} className="text-blue-500 hover:underline">
+                        Create an account
+                    </button>
+                </p>
+            </form>
         </div>
     );
 }

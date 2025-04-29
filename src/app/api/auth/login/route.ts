@@ -1,18 +1,18 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
-import { loginSchema } from '@/lib/validation/authSchema';
+import { loginFormSchema } from '@/lib/validation/authSchema';
 import { verifyPassword } from '@/util/crypto';
+import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
 
 export async function POST(request: NextRequest) {
     try {
         // Parse and validate the request body
         const body = await request.json();
 
-        const validatedData = loginSchema.parse(body);
+        const validatedData = loginFormSchema.parse(body);
         const { email, password } = validatedData;
 
         // Query the database for the user
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         // Create a response with user data (excluding sensitive information)
         const { password: _, salt: __, ...userWithoutSensitiveData } = user;
 
-        const response = NextResponse.json(userWithoutSensitiveData);
+        const response = NextResponse.json({ user: userWithoutSensitiveData });
 
         // Set session cookie in the response
         response.cookies.set({
@@ -49,11 +49,6 @@ export async function POST(request: NextRequest) {
 
         return response;
     } catch (error) {
-        if (error instanceof z.ZodError) {
-            return NextResponse.json({ error: error.errors }, { status: 400 });
-        }
-
-        console.error('Login error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return handleApiError(error);
     }
 }

@@ -2,15 +2,18 @@
 
 import { Button } from '@/components/common/Button';
 import { useAuthStore } from '@/lib/store/authStore';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
 export default function LogoutButton() {
+    const router = useRouter();
+
     return (
         <Button
             variant="primary"
             onClick={async () => {
                 const { logout } = useAuthStore.getState();
                 await logout();
-                redirect('/login');
+                router.push('/');
             }}
         >
             Log Out

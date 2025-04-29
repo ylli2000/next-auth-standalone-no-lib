@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ForgotPasswordForm from './ForgotPasswordForm';
-import LogInForm from './LoginForm';
+import LogInForm from './LogInForm';
 import RegisterForm from './RegisterForm';
 
 // Form types for state tracking

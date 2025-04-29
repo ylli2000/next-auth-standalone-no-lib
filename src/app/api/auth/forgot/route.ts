@@ -2,15 +2,16 @@ import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { sendEmail } from '@/lib/email/emailService';
 import { getPasswordResetEmailTemplate } from '@/lib/email/templates';
-import { passwordResetRequestSchema } from '@/lib/validation/authSchema';
+import { passwordResetRequestFormSchema } from '@/lib/validation/authSchema';
 import { generatePasswordResetToken } from '@/util/crypto';
+import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const validatedData = passwordResetRequestSchema.parse(body);
+        const validatedData = passwordResetRequestFormSchema.parse(body);
 
         // Find user by email
         const user = await db.query.userTable.findFirst({
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Create reset link
-        const resetLink = `${request.nextUrl.origin}/reset-password?token=${token}`;
+        const resetLink = `${request.nextUrl.origin}/reset?token=${token}`;
 
         // Create email content
         const emailHtml = getPasswordResetEmailTemplate(
@@ -68,7 +69,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to send email. Please try again later.' }, { status: 500 });
         }
     } catch (error) {
-        console.error('Password reset request error:', error);
-        return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+        return handleApiError(error);
     }
 }

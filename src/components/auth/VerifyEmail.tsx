@@ -1,105 +1,77 @@
 'use client';
 
-import { EmailVerificationValues } from '@/lib/validation/authSchema';
-import Link from 'next/link';
+import MessageText from '@/components/common/MessageText';
+import { useAuthStore } from '@/lib/store/authStore';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface VerifyEmailProps {
     token: string;
-    onSuccess?: () => void;
-    onError?: (error: string) => void;
 }
 
-export default function VerifyEmail({ token, onSuccess, onError }: VerifyEmailProps) {
-    const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-    const [message, setMessage] = useState('Verifying your email...');
+export default function VerifyEmail({ token }: VerifyEmailProps) {
+    const router = useRouter();
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [message, setMessage] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!token) {
-            setStatus('error');
-            const errorMsg = 'Invalid verification link. Email verification token is required.';
-            setMessage(errorMsg);
-            if (onError) onError(errorMsg);
-            return;
-        }
-
         const verifyEmail = async () => {
+            setStatus('loading');
+
             try {
-                const response = await fetch('/api/auth/verify-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ token } as EmailVerificationValues)
-                });
+                const { verifyEmail: verifyEmailFn } = useAuthStore.getState();
+                const result = await verifyEmailFn({ token });
 
-                const data = await response.json();
-
-                if (response.ok) {
+                if (result.success) {
                     setStatus('success');
-                    setMessage(data.message || 'Email verified successfully!');
-                    if (onSuccess) onSuccess();
-                } else {
+                    setMessage(result.message || 'Email verified successfully!');
+                } else if (result.error) {
                     setStatus('error');
-                    const errorMsg = data.error || 'Failed to verify email. Please try again or contact support.';
-                    setMessage(errorMsg);
-                    if (onError) onError(errorMsg);
+                    setMessage(result.error || 'Email verification failed');
                 }
             } catch (error) {
                 setStatus('error');
                 const errorMsg = 'An unexpected error occurred. Please try again later.';
                 setMessage(errorMsg);
-                if (onError) onError(errorMsg);
                 console.error('Email verification error:', error);
             }
         };
 
         verifyEmail();
-    }, [token, onSuccess, onError]);
+    }, [token]);
+
+    const handleReturnToLogin = () => {
+        router.push('/auth');
+    };
 
     return (
-        <div className="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Email Verification</h1>
+        <div className="w-full max-w-md mx-auto">
+            <h1 className="text-3xl font-bold mb-8 text-center">Verify Your Email</h1>
 
-            {status === 'verifying' && (
-                <div className="flex items-center justify-center p-4">
-                    <div className="w-6 h-6 border-2 border-t-blue-500 rounded-full animate-spin mr-2"></div>
-                    <p>{message}</p>
+            {message && (
+                <div className="mb-6">
+                    <MessageText
+                        message={message}
+                        variant={status === 'success' ? 'success' : status === 'error' ? 'error' : 'default'}
+                    />
                 </div>
             )}
 
-            {status === 'success' && (
-                <div className="text-center">
-                    <div className="bg-green-100 text-green-700 p-4 rounded-md mb-4">
-                        <p>{message}</p>
-                    </div>
-                    <p className="mb-4">Your email has been verified. You can now log in to your account.</p>
-                    <Link href="/" className="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Log In
-                    </Link>
+            {status === 'success' ? (
+                <div className="p-6 space-y-4 text-center">
+                    <p className="text-gray-400 mb-4">Your email has been verified successfully!</p>
+                    <button
+                        onClick={handleReturnToLogin}
+                        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                        Return to Login
+                    </button>
                 </div>
-            )}
-
-            {status === 'error' && (
-                <div className="text-center">
-                    <div className="bg-red-100 text-red-700 p-4 rounded-md mb-4">
-                        <p>{message}</p>
-                    </div>
-                    <p className="mb-4">We couldn&apos;t verify your email. Please try again or contact support.</p>
-                    <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 justify-center">
-                        <Link
-                            href="/"
-                            className="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                        >
-                            Back to Login
-                        </Link>
-                        <Link
-                            href="/contact"
-                            className="inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                        >
-                            Contact Support
-                        </Link>
-                    </div>
+            ) : (
+                <div className="p-6 space-y-4 text-center">
+                    <p className="text-gray-400 mb-4">
+                        {status === 'loading' ? 'Verifying your email...' : 'Please wait while we verify your email.'}
+                    </p>
                 </div>
             )}
         </div>

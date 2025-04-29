@@ -27,6 +27,7 @@ alwaysApply: true
 - **Never assume missing context** ask questions if uncertain
 - **Never hallucinate libraries or functions** only use known, verified packages and functions calls
 - **Always confirm file paths, functions and module names** exist before referencing them in code or tests
+- **Keep you code SOLID DRY KISS** do one thing at a time
 - **DO NOT automatically run dev, run lint, or run build** unless explicitly instructed to with keywords "dev, lint, build"
 - **DO NOT delete or modify existing code** unless it is directly related to the user's request
 - **Focus strictly at user's question** do not extend your scope to modify or delete anything not directly related
@@ -36,3 +37,23 @@ alwaysApply: true
 ### 📣 User Communication
 - **Explicitly print the MCP server name that you are using** to let the user know before using the service
 
+
+### 🏗️ Tech Stack
+- **Framework**: Next.js 15 (App Router)
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS V4 (Pay attention to new syntax)
+- **Language**: TypeScript
+- **State Management**: React Context, Zustand for global state
+- **Form Handling**: React Hook Form with Zod validation
+- **API Communication**: Fetch within Zustand Store
+- **Authentication**: Custom Implementation and NextAuth.js
+- **Database**: Postgresql hosted on neon.tech
+- **ORM**: Drizzle ORM, Drizzle studio
+- **Caching**: Redis hosted on upstash
+- **Testing**: Jest and React Testing Library
+- **Linting/Formatting**: ESLint, Prettier
+- **Build/Dev Tools**: pnpm (DO NOT use npm)
+- **Deployment**: Vercel (If we want to deploy)
+- **CI/CD**: Configure GitHub Actions for CI/CD
+- **Source Code Repository**: GitHub
+- **Pre-commit Checks**: Husky

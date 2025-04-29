@@ -1,4 +1,4 @@
-import { loginSchema } from '@/lib/validation/authSchema';
+import { loginFormSchema } from '@/lib/validation/authSchema';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         // Parse and validate the request body
         const body = await request.json();
 
-        const validatedData = loginSchema.parse(body);
+        const validatedData = loginFormSchema.parse(body);
         const { email, password } = validatedData;
 
         // Check if user exists - this is a placeholder

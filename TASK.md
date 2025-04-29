@@ -8,37 +8,17 @@
 
 ## Core Dependencies
 
-- [ ] Install and configure Zustand for global state management
-- [ ] Install and configure React Hook Form with Zod
-- [ ] Install and configure React Query
-- [ ] Set up Drizzle ORM
-- [ ] Set up Redis for caching
-- [ ] Configure ESLint and Prettier
+- [x] Install and configure Zustand for global state management
+- [x] Install and configure React Hook Form with Zod
+- [x] Install and configure React Query
+- [x] Set up Drizzle ORM
+- [x] Set up Redis for caching
+- [x] Configure ESLint and Prettier
 
 ## Authentication Implementation
 
-- [ ] Implement custom email/password authentication
-    - [ ] Create user registration form
-    - [ ] Set up login form
-    - [ ] Implement server-side session management
-    - [ ] Create authentication context
-    - [ ] Set up protected routes
-- [ ] Implement NextAuth.js for magic links
-    - [ ] Install and configure NextAuth.js
-    - [ ] Set up magic link authentication
-    - [ ] Create magic link UI
-- [ ] Implement social authentication
-    - [ ] Configure Google authentication
-    - [ ] Configure GitHub authentication
-    - [ ] Create social login UI
-
-## UI Components
-
-- [ ] Create layout components
-- [ ] Create navigation components
-- [ ] Design and implement auth-related forms
-- [ ] Create user profile components
-- [ ] Implement loading and error states
+- [ ] Remove Vercel tab and Clerk tab
+- [ ] Implement Redis session management
 
 ## Testing
 
@@ -49,3 +29,6 @@
 ## Discovered During Work
 
 <!-- New tasks discovered during development will be added here -->
+
+- [ ] Go back to update remember me to control how long the authentication/session cookie/token is valid (e.g., session cookie vs. long-lived cookie).
+- [ ] UserUpdateProfile and UserResetPassword should read the session id, not the user id.

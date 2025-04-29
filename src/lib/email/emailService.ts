@@ -27,11 +27,13 @@ type SendEmailOptions = {
     html: string;
 };
 
-export async function sendEmail({ to, subject, html }: SendEmailOptions): Promise<{
+interface SendEmailResult {
     success: boolean;
     previewUrl?: string;
-    error?: any;
-}> {
+    error?: Error | string;
+}
+
+export async function sendEmail({ to, subject, html }: SendEmailOptions): Promise<SendEmailResult> {
     try {
         // Create test transporter
         const transporter = await createTestTransporter();
@@ -56,9 +58,11 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions): Promis
         };
     } catch (error) {
         console.error('Error sending email:', error);
+
+        // Handle error properly with type guard
         return {
             success: false,
-            error
+            error: error instanceof Error ? error : String(error)
         };
     }
 }

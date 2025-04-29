@@ -1,0 +1,9 @@
+This is a placeholder for an avatar image.
+For actual implementation, you'll need to:
+
+1. Add a real PNG file named 'avatar-placeholder.png' to the public folder
+2. Or use a dynamic avatar service URL instead
+ 
+For testing purposes, you can use URLs from:
+- Placeholder services like https://placehold.co/32x32
+- Avatar services like https://ui-avatars.com/api/?name=John+Doe&size=32 
