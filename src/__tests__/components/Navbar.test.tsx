@@ -1,5 +1,6 @@
 import Navbar from '@/components/common/Navbar';
 import { useAuthStore } from '@/lib/store/authStore';
+import '@testing-library/jest-dom';
 import { render, screen } from '../utils/test-utils';
 
 // Mock the authStore
@@ -11,7 +12,7 @@ describe('Navbar Component', () => {
     // Test case for unauthenticated user
     it('renders login button for unauthenticated user', () => {
         // Mock the auth store return value for an unauthenticated user
-        (useAuthStore as jest.Mock).mockReturnValue({
+        (useAuthStore as unknown as jest.Mock).mockReturnValue({
             user: null,
             isAuthenticated: false
         });
@@ -32,13 +33,13 @@ describe('Navbar Component', () => {
         const mockUser = { name: 'Test User', email: 'test@example.com' };
         const mockLogout = jest.fn();
 
-        (useAuthStore as jest.Mock).mockReturnValue({
+        (useAuthStore as unknown as jest.Mock).mockReturnValue({
             user: mockUser,
             isAuthenticated: true
         });
 
         // Mock the getState method for logout
-        (useAuthStore as any).getState = jest.fn().mockReturnValue({
+        (useAuthStore as unknown as { getState: () => unknown }).getState = jest.fn().mockReturnValue({
             logout: mockLogout
         });
 

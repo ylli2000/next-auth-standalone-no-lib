@@ -3,44 +3,55 @@ description:
 globs: 
 alwaysApply: true
 ---
-### 7️⃣ Context7
+### 📣 User Communication
+
+- **Explicitly print the MCP server name that you are using** to let the user know before using the service
+
+
+### 💡 Read Updated Docs
+
 - **Context7 MCP gives you the updated docs for many popular libraries** less old or hallucinated answers would be produced using this service
 - **Always use the context MCP server** to reference library docs like Vercel, Tailwind, Next, Drizzle
 - **Only search once with 5000 tokens** for any specific piece of docs
 - **Fallback to search online** to perform a wider search if you don't get what you need form context7 docs
   
-### 🔄 Project Awareness & Context
-- **Always read @PLANNING.md** at the start of a new conversation to understand the project's architecture, features and goals
-- **Always read @GUIDELINES.md** at the start of a new conversation to learn the coding style and constraints
 
-### 📚 Documentation & Explainability
-- **Update @README.md** when new features are added, dependencies change, or setup steps are modified
-- **Comment non-obvious code** and ensure everything is understandable to a mid-level developer
-- When writing complex logic, **add an inline `Reason:` comment** explaining the why, not just the what
-
-### ✅ Task Completion
-- **Add the tasks in [TASK.md](mdc:TASK.md)** only when explicitly instructed
-- **Always Mark completed tasks in @TASK.md** immediately after finishing them
-- **Add new sub-tasks or TODOs discovered during development to @TASK.md** under a “Discovered During Work” section
-  
 ### 🧠 AI Behavior Rules
-- **Never assume missing context** ask questions if uncertain
-- **Never hallucinate libraries or functions** only use known, verified packages and functions calls
-- **Always confirm file paths, functions and module names** exist before referencing them in code or tests
+
 - **Keep you code SOLID DRY KISS** do one thing at a time
+- **DO NOT git push or commit** unless explicitly instructed to with keywords "push, commit"
 - **DO NOT use any or unknown types** in Typescript
 - **DO NOT automatically run dev, run lint, or run build** unless explicitly instructed to with keywords "dev, lint, build"
 - **DO NOT delete or modify existing code** unless it is directly related to the user's request
 - **Focus strictly at user's question** do not extend your scope to modify or delete anything not directly related
-- **DO NOT automatically push or commit** unless explicitly instructed to with keywords "push, commit"
 - **DO NOT use npm** pnpm is your package management
+- **Never assume missing context** ask questions if uncertain
+- **Never hallucinate libraries or functions** only use known, verified packages and functions calls
+- **Always confirm file paths, functions and module names** exist before referencing them in code or tests
 - **You cannot access .env due to pravicy** but you can assume that they are working form envSchema.tsx
+  
 
-### 📣 User Communication
-- **Explicitly print the MCP server name that you are using** to let the user know before using the service
+### 🔄 Project Awareness & Context
+
+- **Always read @README.md** at the start of a new conversation to understand the project's architecture
+  
+
+### 📚 Documentation & Explainability
+
+- **Update @README.md** when new features are added, dependencies change, or setup steps are modified
+- **Comment non-obvious code** and ensure everything is understandable to a mid-level developer
+- When writing complex logic, **add an inline `Reason:` comment** explaining the why, not just the what
+
+
+### ✅ Task Completion
+
+- **Add the tasks in [TASK.md](mdc:TASK.md)** only when explicitly instructed
+- **Always Mark completed tasks in @TASK.md** immediately after finishing them
+- **Add new sub-tasks or TODOs discovered during development to @TASK.md** under a “Discovered During Work” section
 
 
 ### 🏗️ Tech Stack
+
 - **Framework**: Next.js 15 (App Router)
 - **UI Library**: React 19
 - **Styling**: Tailwind CSS V4 (Pay attention to new syntax)
@@ -53,7 +64,9 @@ alwaysApply: true
 - **Caching**: Redis hosted on upstash
 - **Cookies**: next/headers manage cookies in Next.js 15's App Router
 
-### Testing & Linting & Deployment
+
+### 🧪 Testing & Linting & Deployment
+
 - **Testing**: Jest and React Testing Library
 - **Linting/Formatting**: ESLint, Prettier
 - **Build/Dev Tools**: pnpm (DO NOT use npm)

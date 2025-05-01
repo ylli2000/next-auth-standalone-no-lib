@@ -14,7 +14,25 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock zustand
-jest.mock('zustand');
+jest.mock('zustand', () => {
+    const actualZustand = jest.requireActual('zustand');
+    return {
+        ...actualZustand,
+        create: () => (fn) => {
+            const store = actualZustand.create()(fn);
+            const initialState = store.getState();
+            store.setState = (newState) => {
+                const mergedState =
+                    typeof newState === 'function'
+                        ? { ...initialState, ...newState(store.getState()) }
+                        : { ...initialState, ...newState };
+                store.getState = () => mergedState;
+                return mergedState;
+            };
+            return store;
+        }
+    };
+});
 
 // Reset all mocks after each test
 afterEach(() => {
