@@ -2,7 +2,7 @@ import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { sendEmail } from '@/lib/email/emailService';
 import { getEmailVerificationEmailTemplate } from '@/lib/email/templates';
-import { registerApiSchema } from '@/lib/validation/authSchema';
+import { getSafeUser, registerApiSchema } from '@/lib/validation/authSchema';
 import { generateEmailVerificationToken, generateSalt, hashPassword } from '@/util/crypto';
 import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
@@ -64,13 +64,14 @@ export async function POST(request: NextRequest) {
             html: emailHtml
         });
 
-        // Return the user (excluding sensitive data)
-        const { password: _, salt: __, ...userWithoutSensitiveData } = newUser;
+        // Use Zod to remove sensitive data
+        const safeUser = getSafeUser(newUser);
+
         //TODO: In a real app, you wouldn't include the preview URL in the response
         // But for a demo project, this is helpful to see the email that would be sent
         return NextResponse.json(
             {
-                user: userWithoutSensitiveData,
+                user: safeUser,
                 //TODO: For demo purposes only!
                 demoPreviewUrl: emailResult.previewUrl,
                 message: 'Registration successful. Please check your email to verify your account.'

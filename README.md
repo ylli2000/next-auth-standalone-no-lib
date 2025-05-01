@@ -2,14 +2,22 @@
 
 Custom email/password authentication system with Redis session management for Next.js applications.
 
+demo images:
+
+![alt text](auth_demo_02.png)
+![alt text](auth_demo_03.png)
+![alt text](auth_demo_01.png)
+
 ## ✨ Features
 
-- Email/password authentication
-- Sliding session management
-- Email verification
-- Password reset
-- Protected routes
-- User profile management
+- 📧 Email/password authentication
+- 🔄 Sliding session management with Redis
+- ✅ Email verification
+- 🔑 Password reset functionality
+- 🛡️ Protected routes with middleware
+- 👤 User profile management
+- 🍪 HTTP-only secure cookies
+- 🧠 "Remember me" functionality
 
 ## 🛠️ Tech Stack
 
@@ -82,6 +90,9 @@ Visit [http://localhost:3000](http://localhost:3000)
 - `src/app/`: Routes and pages
 - `src/components/`: UI components
 - `src/lib/`: Database, validation, sessions
+- `src/lib/session/`: Redis session management
+- `src/lib/drizzle/`: Database schema and queries
+- `src/lib/validation/`: Zod validation schemas
 - `src/util/`: Helper functions
 - `src/contexts/`: React contexts
 - `src/hooks/`: Custom hooks
@@ -93,8 +104,9 @@ Our authentication uses a sliding window approach:
 1. **Creation**: Sessions start with 24h expiry (30 days with "remember me")
 2. **Extension**: Each request refreshes expiration time
 3. **Expiry**: Sessions only expire after user inactivity
+4. **Security**: Sessions use secure, HTTP-only cookies
 
-### Implementation
+### Implementation Details
 
 The session system has three core components:
 
@@ -102,7 +114,7 @@ The session system has three core components:
 2. **`middleware.ts`**: Request interception and session validation
 3. **Auth Routes**: Login/logout handling
 
-Redis's `EXPIRE` command extends session TTL with each authenticated request.
+Sessions are stored in Redis with the prefix `session:` followed by a unique nanoid. Each session contains the user object (excluding sensitive data) serialized as JSON.
 
 ## 📖 Learn More
 

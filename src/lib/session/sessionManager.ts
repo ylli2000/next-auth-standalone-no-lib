@@ -1,6 +1,5 @@
 import { env } from '@/lib/env/envSchema';
 import { redisClient } from '@/lib/redis/client';
-import { User } from '@/lib/store/authStore';
 import { nanoid } from 'nanoid';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
@@ -13,36 +12,38 @@ const SESSION_COOKIE_NAME = 'sessionId';
 /**
  * Creates a new session in Redis for the authenticated user
  *
- * @param user The authenticated user object to store in the session
+ * @param userId The ID of the authenticated user
  * @param rememberMe Whether to use the extended session duration
  * @returns The generated session ID
  *
  * Sliding Session Step 1:
  * - Creates a new session with an initial expiration time
+ * - Stores only the user ID in Redis with the session ID as the key
  * - The session will expire after SESSION_DURATION or REMEMBER_ME_DURATION
  *   unless it's refreshed by user activity
  */
-export async function createSession(user: User, rememberMe: boolean = false): Promise<string> {
+export async function createSession(userId: string, rememberMe: boolean = false): Promise<string> {
     const sessionId = nanoid();
     const duration = rememberMe ? REMEMBER_ME_DURATION : SESSION_DURATION;
 
-    await redisClient.set(`${SESSION_PREFIX}${sessionId}`, JSON.stringify(user), { ex: duration });
+    // Store only the user ID
+    await redisClient.set(`${SESSION_PREFIX}${sessionId}`, userId, { ex: duration });
 
     return sessionId;
 }
 
 /**
- * Retrieves a session from Redis by session ID
+ * Retrieves a user ID from Redis by session ID
  *
  * @param sessionId The session ID to look up
- * @returns The user object stored in the session or null if not found
+ * @returns The user ID if found, null if not found
  */
-export async function getSession(sessionId: string): Promise<User | null> {
+export async function getUserId(sessionId: string): Promise<string | null> {
     try {
-        const data = await redisClient.get(`${SESSION_PREFIX}${sessionId}`);
-        return data ? JSON.parse(data as string) : null;
+        const userId = await redisClient.get(`${SESSION_PREFIX}${sessionId}`);
+        return userId ? userId.toString() : null;
     } catch (error) {
-        console.error('Error getting session:', error);
+        console.error('Error getting user ID from session:', error);
         return null;
     }
 }
@@ -71,8 +72,8 @@ export async function deleteSession(sessionId: string): Promise<void> {
  */
 export async function refreshSession(sessionId: string, rememberMe: boolean = false): Promise<boolean> {
     try {
-        const user = await getSession(sessionId);
-        if (!user) return false;
+        const userId = await getUserId(sessionId);
+        if (!userId) return false;
 
         const duration = rememberMe ? REMEMBER_ME_DURATION : SESSION_DURATION;
         // Redis EXPIRE command resets the TTL to the specified duration
@@ -103,7 +104,7 @@ export async function getSessionId(): Promise<string | undefined> {
 /**
  * Validates the current session and refreshes its expiration time
  *
- * @returns The user object from the session or null if invalid
+ * @returns The user ID from the session or null if invalid
  *
  * Sliding Session Step 3:
  * - This function is called on every authenticated request (typically by middleware)
@@ -112,19 +113,19 @@ export async function getSessionId(): Promise<string | undefined> {
  * - This ensures that as long as the user remains active, their session won't expire
  * - The session only expires after the user has been inactive for the full duration
  */
-export async function validateSession(): Promise<User | null> {
+export async function validateSession(): Promise<string | null> {
     try {
         const sessionId = await getSessionId();
         if (!sessionId) return null;
 
-        const user = await getSession(sessionId);
-        if (!user) return null;
+        const userId = await getUserId(sessionId);
+        if (!userId) return null;
 
         // Sliding Session: Refresh the session duration to extend its lifetime
         // This is what creates the "sliding window" effect - each verification
         // resets the countdown timer for session expiration
         await refreshSession(sessionId);
-        return user;
+        return userId;
     } catch (error) {
         console.error('Error validating session:', error);
         return null;
@@ -176,16 +177,16 @@ export function clearSessionCookie(responseCookies: ResponseCookies): void {
  * This combines both Redis session creation and cookie setting in one function
  *
  * @param responseCookies The response cookies object to set the cookie on
- * @param user The user object to store in the session
+ * @param userId The ID of the authenticated user
  * @param rememberMe Whether to use the extended session duration
  * @returns The session ID
  */
 export async function createSessionWithCookie(
     responseCookies: ResponseCookies,
-    user: User,
+    userId: string,
     rememberMe: boolean = false
 ): Promise<string> {
-    const sessionId = await createSession(user, rememberMe);
+    const sessionId = await createSession(userId, rememberMe);
     setSessionCookie(responseCookies, sessionId, rememberMe);
     return sessionId;
 }

@@ -1,7 +1,7 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { createSessionWithCookie } from '@/lib/session/sessionManager';
-import { loginFormSchema } from '@/lib/validation/authSchema';
+import { getSafeUser, loginFormSchema } from '@/lib/validation/authSchema';
 import { verifyPassword } from '@/util/crypto';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
         // Get remember me preference from request
         const rememberMe = body.rememberMe || false;
 
-        // Remove sensitive data before sending response
-        const { password: _, salt: __, ...userWithoutSensitiveData } = user;
+        // Use Zod to remove sensitive data
+        const safeUser = getSafeUser(user);
 
         // Create response with session cookie
-        const response = NextResponse.json({ user: userWithoutSensitiveData });
+        const response = NextResponse.json({ user: safeUser });
 
         /**
          * Sliding Session Step 1: Create the session and set the cookie
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
          * - Sets the session cookie with the same duration
          * - All cookie management is now handled by the sessionManager
          */
-        await createSessionWithCookie(response.cookies, user, rememberMe);
+        await createSessionWithCookie(response.cookies, user.id, rememberMe);
 
         return response;
     } catch (error) {

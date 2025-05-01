@@ -1,7 +1,7 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
 import { validateSession } from '@/lib/session/sessionManager';
-import { updateProfileSchema } from '@/lib/validation/authSchema';
+import { getSafeUser, updateProfileSchema } from '@/lib/validation/authSchema';
 import { generateSalt, hashPassword } from '@/util/crypto';
 import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
@@ -12,14 +12,25 @@ export async function GET(request: NextRequest) {
         // Note: This route is also protected by middleware, but we validate the session
         // here as well for defense-in-depth and to ensure the route remains secure even
         // if the middleware configuration changes.
-        const user = await validateSession();
+        const userId = await validateSession();
 
-        if (!user) {
+        if (!userId) {
             return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
         }
 
-        // User is already available from validateSession with sensitive data removed
-        return NextResponse.json({ user });
+        // Fetch the user from the database
+        const user = await db.query.userTable.findFirst({
+            where: eq(userTable.id, userId)
+        });
+
+        if (!user) {
+            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        }
+
+        // Use Zod to remove sensitive data
+        const safeUser = getSafeUser(user);
+
+        return NextResponse.json({ user: safeUser });
     } catch (error) {
         return handleApiError(error);
     }
@@ -30,9 +41,9 @@ export async function POST(request: NextRequest) {
         // Note: This route is also protected by middleware, but we validate the session
         // here as well for defense-in-depth and to ensure the route remains secure even
         // if the middleware configuration changes.
-        const user = await validateSession();
+        const userId = await validateSession();
 
-        if (!user) {
+        if (!userId) {
             return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
         }
 
@@ -62,21 +73,21 @@ export async function POST(request: NextRequest) {
         }
 
         // Update the user
-        await db.update(userTable).set(updateData).where(eq(userTable.id, user.id));
+        await db.update(userTable).set(updateData).where(eq(userTable.id, userId));
 
         // Get updated user data
         const updatedUser = await db.query.userTable.findFirst({
-            where: eq(userTable.id, user.id)
+            where: eq(userTable.id, userId)
         });
 
         if (!updatedUser) {
             return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
         }
 
-        // Remove sensitive data
-        const { password: _, salt: __, ...userWithoutSensitiveData } = updatedUser;
+        // Use Zod to remove sensitive data
+        const safeUser = getSafeUser(updatedUser);
 
-        return NextResponse.json({ user: userWithoutSensitiveData });
+        return NextResponse.json({ user: safeUser });
     } catch (error) {
         return handleApiError(error);
     }

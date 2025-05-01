@@ -21,7 +21,7 @@ const authRoutes = ['/auth', '/verify'];
 export async function middleware(request: NextRequest) {
     // This call triggers the sliding session mechanism by extending the session duration
     // if the session is valid - it's the entry point to the sliding window behavior
-    const user = await validateSession();
+    const userId = await validateSession();
     const { pathname } = request.nextUrl;
 
     // Check if the route is protected
@@ -29,12 +29,12 @@ export async function middleware(request: NextRequest) {
     const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
 
     // Redirect authenticated users away from auth pages
-    if (user && isAuthRoute) {
+    if (userId && isAuthRoute) {
         return NextResponse.redirect(new URL('/', request.url));
     }
 
     // Redirect non-authenticated users to login
-    if (!user && isProtectedRoute) {
+    if (!userId && isProtectedRoute) {
         const loginUrl = new URL('/auth/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
         return NextResponse.redirect(loginUrl);

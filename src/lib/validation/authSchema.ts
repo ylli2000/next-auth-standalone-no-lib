@@ -30,6 +30,42 @@ const passwordMatchRefinement = <T extends { password: z.ZodString; confirmPassw
         path: ['confirmPassword']
     });
 
+// Define the base user schema without sensitive fields
+export const safeUserSchema = z.object({
+    id: z.string().uuid(),
+    name: nameField,
+    email: z.string().email(),
+    emailVerified: z.boolean().default(false),
+    role: z.enum(['admin', 'user'] as const).default('user'),
+    createdAt: z
+        .date()
+        .or(z.string().datetime())
+        .transform((val) => new Date(val)),
+    updatedAt: z
+        .date()
+        .or(z.string().datetime())
+        .transform((val) => new Date(val))
+});
+
+// Add sensitive fields to create the full user schema
+export const fullUserSchema = safeUserSchema.extend({
+    password: z.string(),
+    salt: z.string()
+});
+
+// Type for the safe user (without sensitive fields)
+export type SafeUser = z.infer<typeof safeUserSchema>;
+
+// Type for the full user (including sensitive fields)
+export type User = z.infer<typeof fullUserSchema>;
+
+// Function to safely transform a user to remove sensitive data
+export function getSafeUser(user: User | Record<string, unknown>): SafeUser {
+    // Pick only the fields defined in safeUserSchema
+    const { id, name, email, emailVerified, role, createdAt, updatedAt } = fullUserSchema.parse(user);
+    return { id, name, email, emailVerified, role, createdAt, updatedAt };
+}
+
 // Registration form schema
 export const registerFormSchema = passwordMatchRefinement(
     z.object({
