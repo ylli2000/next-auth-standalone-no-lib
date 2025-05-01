@@ -85,6 +85,31 @@ pnpm dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
+## 📝 Testing
+
+Run tests with:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode (for development)
+pnpm test:watch
+
+# Generate test coverage report
+pnpm test:coverage
+```
+
+The test suite uses Jest and React Testing Library. Test files are organized in the `src/__tests__/` directory, mirroring the structure of the main application:
+
+- `src/__tests__/components/`: Component tests
+- `src/__tests__/lib/`: Library and utility tests
+- `src/__tests__/hooks/`: Custom hook tests
+- `src/__tests__/pages/`: Page component tests
+- `src/__tests__/utils/`: Test utilities
+
+For more information on writing tests, see the [testing documentation](src/__tests__/README.md).
+
 ## 📁 Project Structure
 
 - `src/app/`: Routes and pages
@@ -96,6 +121,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 - `src/util/`: Helper functions
 - `src/contexts/`: React contexts
 - `src/hooks/`: Custom hooks
+- `src/__tests__/`: Tests for components and utilities
 
 ## 🔄 Sliding Session System
 
