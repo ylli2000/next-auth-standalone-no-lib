@@ -9,7 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     try {
-        // Get the authenticated user from the session
+        // Note: This route is also protected by middleware, but we validate the session
+        // here as well for defense-in-depth and to ensure the route remains secure even
+        // if the middleware configuration changes.
         const user = await validateSession();
 
         if (!user) {
@@ -25,7 +27,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        // Get the authenticated user from the session
+        // Note: This route is also protected by middleware, but we validate the session
+        // here as well for defense-in-depth and to ensure the route remains secure even
+        // if the middleware configuration changes.
         const user = await validateSession();
 
         if (!user) {
