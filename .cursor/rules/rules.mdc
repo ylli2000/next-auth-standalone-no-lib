@@ -32,8 +32,9 @@ alwaysApply: true
 - **DO NOT delete or modify existing code** unless it is directly related to the user's request
 - **Focus strictly at user's question** do not extend your scope to modify or delete anything not directly related
 - **DO NOT automatically push or commit** unless explicitly instructed to with keywords "push, commit"
-- **Use pnpm Package management** do not use npm
-  
+- **DO NOT use npm** pnpm is your package management
+- **You cannot access .env due to pravicy** but you can assume that they are working form envSchema.tsx
+
 ### 📣 User Communication
 - **Explicitly print the MCP server name that you are using** to let the user know before using the service
 
@@ -46,10 +47,12 @@ alwaysApply: true
 - **State Management**: React Context, Zustand for global state
 - **Form Handling**: React Hook Form with Zod validation
 - **API Communication**: Fetch within Zustand Store
-- **Authentication**: Custom Implementation and NextAuth.js
 - **Database**: Postgresql hosted on neon.tech
 - **ORM**: Drizzle ORM, Drizzle studio
 - **Caching**: Redis hosted on upstash
+- **Cookies**: next/headers manage cookies in Next.js 15's App Router
+
+### Testing & Linting & Deployment
 - **Testing**: Jest and React Testing Library
 - **Linting/Formatting**: ESLint, Prettier
 - **Build/Dev Tools**: pnpm (DO NOT use npm)
