@@ -1,128 +1,115 @@
-# Next.js Authentication Project
+# 🔐 Next.js Authentication Project
 
-This project demonstrates multiple authentication strategies in a Next.js application:
+Custom email/password authentication system with Redis session management for Next.js applications.
 
-1. Custom email/password authentication with cookies and server-side sessions
-2. NextAuth.js implementation with magic links
-3. Social authentication via NextAuth.js (Google and GitHub)
+## ✨ Features
 
-## Tech Stack
-
-This project is built with:
-
-- **Framework**: Next.js 15 (App Router)
-- **UI Library**: React 19
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript
-- **State Management**: useState for local state, Zustand for global state, React Query for server state
-- **Form Handling**: React Hook Form with Zod validation
-- **API Communication**: React Query (TanStack Query)
-- **Authentication**: Custom Implementation and NextAuth.js
-- **ORM**: Drizzle ORM
-- **Caching**: Redis from Upstash
-- **Build/Dev Tools**: pnpm
-
-## Getting Started
-
-First, install dependencies:
-
-```bash
-pnpm install
-```
-
-Then, run the development server:
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Project Structure
-
-- `src/app/`: Application routes and pages
-- `src/app/components/`: Reusable UI components
-- `src/lib/`: Utility functions and helpers
-- `src/app/api/`: API routes
-- `src/app/contexts/`: React context providers
-- `src/app/hooks/`: Custom React hooks
-- `src/app/styles/`: Global styles and Tailwind configuration
-
-## Features
-
-- Custom email/password authentication
-- Magic link authentication
-- Social login (Google, GitHub)
+- Email/password authentication
+- Sliding session management
+- Email verification
+- Password reset
 - Protected routes
 - User profile management
-- Session management
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+- **Framework**: Next.js 15 (App Router)
+- **UI**: React 19 with Tailwind CSS
+- **Language**: TypeScript
+- **State**: React Context, Zustand
+- **Validation**: React Hook Form with Zod
+- **Database**: PostgreSQL on Neon.tech with Drizzle ORM
+- **Sessions**: Redis on Upstash
+- **Emails**: Nodemailer with Ethereal SMTP
+- **Utils**: nanoid for session IDs
 
-To learn more about Next.js, take a look at the following resources:
+## 🧪 Testing & Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Testing**: Jest, React Testing Library
+- **Linting**: ESLint, Prettier
+- **CI/CD**: GitHub Actions
+- **Deployment**: Vercel
+- **Tooling**: pnpm, Husky
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Prerequisites
 
-## Deploy on Vercel
+1. **Upstash Redis**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    - Sign up at [Upstash](https://upstash.com/)
+    - Create Redis database
+    - Copy UPSTASH_REDIS_URL and UPSTASH_REDIS_TOKEN
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Neon.tech PostgreSQL**
 
-# Next.js Auth Standalone
+    - Sign up at [Neon.tech](https://neon.tech/)
+    - Create database
+    - Copy DATABASE_URL
 
-A standalone Next.js authentication system without external auth libraries.
+3. **SMTP for Testing**
+    - Use [Ethereal Email](https://ethereal.email/) for development
+    - Generate test credentials
 
-## Development
+## 🏁 Getting Started
+
+Install dependencies:
 
 ```bash
 pnpm install
-pnpm dev
 ```
 
-### Development Server Options
-
-By default, the project uses the standard Next.js development server (Webpack-based). This provides a stable development experience with reliable hot reloading.
-
-If the project grows larger and you notice slower development server performance, you can use Turbopack for faster builds:
-
-```bash
-pnpm dev -- --turbo
-```
-
-Note: Turbopack is still experimental and may have caching issues. If you experience stale builds or unexpected behavior, try:
-
-1. Stop the dev server
-2. Run `pnpm clean` to clear caches
-3. Restart the dev server
-
-## Database
+Setup database:
 
 ```bash
 pnpm db:push
 ```
 
-## Environment Variables
+Run database UI (optional):
 
-Create a `.env` file in the root directory with the following variables:
-
-```env
-DATABASE_URL=postgres://user:password@localhost:5432/dbname
-NEXTAUTH_SECRET=your-secret-key
-NEXTAUTH_URL=http://localhost:3000
+```bash
+pnpm db:studio
 ```
 
-## Features
+Start development server:
 
-- Email/Password authentication
-- Password reset flow
-- Email verification
-- Protected routes
-- Form validation with Zod
-- Type-safe database queries with Drizzle ORM
-- Modern UI with Tailwind CSS
+```bash
+pnpm dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000)
+
+## 📁 Project Structure
+
+- `src/app/`: Routes and pages
+- `src/components/`: UI components
+- `src/lib/`: Database, validation, sessions
+- `src/util/`: Helper functions
+- `src/contexts/`: React contexts
+- `src/hooks/`: Custom hooks
+
+## 🔄 Sliding Session System
+
+Our authentication uses a sliding window approach:
+
+1. **Creation**: Sessions start with 24h expiry (30 days with "remember me")
+2. **Extension**: Each request refreshes expiration time
+3. **Expiry**: Sessions only expire after user inactivity
+
+### Implementation
+
+The session system has three core components:
+
+1. **`sessionManager.ts`**: Session CRUD operations
+2. **`middleware.ts`**: Request interception and session validation
+3. **Auth Routes**: Login/logout handling
+
+Redis's `EXPIRE` command extends session TTL with each authenticated request.
+
+## 📖 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Learn Next.js](https://nextjs.org/learn)
+- [Next.js GitHub Repository](https://github.com/vercel/next.js)
+
+## 🚢 Deployment
+
+Deploy this project to [Vercel](https://vercel.com/new) with zero configuration.

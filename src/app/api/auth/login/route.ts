@@ -1,54 +1,61 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
+import { createSessionWithCookie } from '@/lib/session/sessionManager';
 import { loginFormSchema } from '@/lib/validation/authSchema';
 import { verifyPassword } from '@/util/crypto';
-import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Login route handler that authenticates users and creates sessions
+ *
+ * Sliding Session Initialization:
+ * - This route initiates the sliding session lifecycle
+ * - It creates the initial session in Redis with createSession()
+ * - It sets the corresponding session cookie with the same expiration
+ * - The initial expiration time is determined by the rememberMe preference
+ */
 export async function POST(request: NextRequest) {
     try {
-        // Parse and validate the request body
         const body = await request.json();
+        const { email, password } = loginFormSchema.parse(body);
 
-        const validatedData = loginFormSchema.parse(body);
-        const { email, password } = validatedData;
-
-        // Query the database for the user
+        // Find user by email
         const user = await db.query.userTable.findFirst({
             where: eq(userTable.email, email)
         });
 
-        // If no user is found or password doesn't match, return an error
-        // Using the same error message for both cases for security
-        if (!user || !verifyPassword(password, user.password, user.salt)) {
-            return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+        if (!user) {
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
-        // Generate a unique session ID
-        const sessionId = uuidv4();
+        // Verify password
+        const isValidPassword = verifyPassword(password, user.password, user.salt);
+        if (!isValidPassword) {
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
 
-        // TODO: In a real implementation, save the session to your redis session cache
-        // await redisCache.insert(session).values({ id: sessionId, userId: user.id, expiresAt: ... });
+        // Get remember me preference from request
+        const rememberMe = body.rememberMe || false;
 
-        // Create a response with user data (excluding sensitive information)
+        // Remove sensitive data before sending response
         const { password: _, salt: __, ...userWithoutSensitiveData } = user;
 
+        // Create response with session cookie
         const response = NextResponse.json({ user: userWithoutSensitiveData });
 
-        // Set session cookie in the response
-        response.cookies.set({
-            name: 'session',
-            value: sessionId,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 60 * 60 * 24 * 7, // 1 week
-            path: '/'
-        });
+        /**
+         * Sliding Session Step 1: Create the session and set the cookie
+         *
+         * - Creates a new session with an initial TTL in Redis
+         * - Sets the session cookie with the same duration
+         * - All cookie management is now handled by the sessionManager
+         */
+        await createSessionWithCookie(response.cookies, user, rememberMe);
 
         return response;
     } catch (error) {
-        return handleApiError(error);
+        console.error('Login error:', error);
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Login failed' }, { status: 400 });
     }
 }

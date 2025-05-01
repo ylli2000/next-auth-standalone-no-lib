@@ -1,35 +1,23 @@
 import { db } from '@/lib/drizzle/db';
 import { userTable } from '@/lib/drizzle/tableSchema';
+import { validateSession } from '@/lib/session/sessionManager';
 import { updateProfileSchema } from '@/lib/validation/authSchema';
 import { generateSalt, hashPassword } from '@/util/crypto';
 import { handleApiError } from '@/util/errors';
 import { eq } from 'drizzle-orm';
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     try {
-        // Get the session token from cookies
-        const cookieStore = await cookies();
-        const sessionToken = cookieStore.get('session')?.value;
+        // Get the authenticated user from the session
+        const user = await validateSession();
 
-        if (!sessionToken) {
+        if (!user) {
             return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
         }
 
-        // Find the user by session token
-        const user = await db.query.userTable.findFirst({
-            where: eq(userTable.id, sessionToken)
-        });
-
-        if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
-        }
-
-        // Remove sensitive data
-        const { password: _, salt: __, ...userWithoutSensitiveData } = user;
-
-        return NextResponse.json({ user: userWithoutSensitiveData });
+        // User is already available from validateSession with sensitive data removed
+        return NextResponse.json({ user });
     } catch (error) {
         return handleApiError(error);
     }
@@ -37,24 +25,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        // Get the session token from cookies
-        const cookieStore = await cookies();
-        const sessionToken = cookieStore.get('session')?.value;
-        //TODO: this is wrong! sessionToken is not the user id
-        //TODO: come back to this when we have a proper session management system
-        if (!sessionToken) {
-            return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-        }
-
-        //TODO: this is wrong! sessionToken is not the user id
-        //TODO: come back to this when we have a proper session management system
-        const user = await db.query.userTable.findFirst({
-            //TODO: <---- fix this: you will never find session in userTable!!
-            where: eq(userTable.id, sessionToken)
-        });
+        // Get the authenticated user from the session
+        const user = await validateSession();
 
         if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
         }
 
         // Parse and validate the request body

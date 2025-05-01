@@ -1,17 +1,17 @@
+import { deleteSessionWithCookie } from '@/lib/session/sessionManager';
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-    // Create a response
-    const response = NextResponse.json({ success: true });
+    try {
+        // Create response
+        const response = NextResponse.json({ success: true });
 
-    // Clear the session cookie
-    response.cookies.set({
-        name: 'session',
-        value: '',
-        httpOnly: true,
-        expires: new Date(0), // Set expiration to the past to delete the cookie
-        path: '/'
-    });
+        // Delete session and clear session cookie in one step
+        await deleteSessionWithCookie(response.cookies);
 
-    return response;
+        return response;
+    } catch (error) {
+        console.error('Logout error:', error);
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Logout failed' }, { status: 500 });
+    }
 }

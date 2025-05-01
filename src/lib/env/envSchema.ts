@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
+    // Node environment
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+
     // Auth
     AUTH_SECRET: z.string().min(1),
     AUTH_URL: z.string().url(),
@@ -24,6 +27,7 @@ const envSchema = z.object({
  * @type {Record<keyof z.infer<typeof envSchema>, string | undefined>}
  */
 const processEnv = {
+    NODE_ENV: process.env.NODE_ENV,
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL: process.env.AUTH_URL,
     DATABASE_URL: process.env.DATABASE_URL,
@@ -40,13 +44,14 @@ const processEnv = {
  * Validate environment variables against the schema
  */
 function validateEnv() {
-    if (process.env.NODE_ENV !== 'production') {
-        console.info('🔍 Validating environment variables...');
-    }
-
+    // Parse the environment variables
     const result = envSchema.safeParse(processEnv);
 
-    console.info('👉 processEnv:', processEnv);
+    // Log environment variables for debugging in non-production environment
+    if (processEnv.NODE_ENV !== 'production') {
+        console.info('🔍 Validating environment variables...');
+        console.info('👉 processEnv:', processEnv);
+    }
 
     if (!result.success) {
         console.error('❌ Invalid environment variables:', result.error.flatten().fieldErrors);
