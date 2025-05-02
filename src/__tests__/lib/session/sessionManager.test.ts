@@ -27,7 +27,7 @@ jest.mock('next/headers', () => ({
 // Mock env
 jest.mock('@/lib/env/envSchema', () => ({
     env: {
-        NODE_ENV: 'test'
+        NODE_ENV: 'testing'
     }
 }));
 

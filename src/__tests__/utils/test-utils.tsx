@@ -17,7 +17,7 @@ export * from '@testing-library/react';
 export { customRender as render };
 
 // Add a dummy test to avoid the "must contain at least one test" error
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'testing') {
     describe('test-utils', () => {
         it('is just a utility file, no tests needed', () => {
             expect(true).toBe(true);
