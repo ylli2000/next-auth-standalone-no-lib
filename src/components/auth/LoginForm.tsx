@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/common/Button';
+import MessageText from '@/components/common/MessageText';
 import { useAuthStore } from '@/lib/store/authStore';
 import { LoginFormValues, loginFormResolver } from '@/lib/validation/authSchema';
 import { useRouter } from 'next/navigation';
@@ -15,6 +16,7 @@ interface LoginFormProps {
 export default function LoginForm({ onShowRegisterForm, onForgotPassword }: LoginFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const { login, rememberMe, setRememberMe } = useAuthStore();
 
     const {
@@ -31,19 +33,26 @@ export default function LoginForm({ onShowRegisterForm, onForgotPassword }: Logi
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
-        try {
-            await login(data);
+        setErrorMessage(null);
+
+        const { success, error } = await login(data);
+        if (success) {
             router.push('/'); // Redirect to home after successful login
-        } catch (error) {
-            console.error('Login failed:', error);
-        } finally {
-            setIsLoading(false);
+        } else {
+            setErrorMessage(error || 'Please check your credentials and try again.');
         }
+        setIsLoading(false);
     };
 
     return (
         <div className="w-full max-w-md mx-auto">
             <h2 className="text-2xl font-bold mb-6 text-[rgb(var(--color-foreground))]">Welcome Back</h2>
+
+            {errorMessage && (
+                <div className="mb-4">
+                    <MessageText message={errorMessage} variant="error" />
+                </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>

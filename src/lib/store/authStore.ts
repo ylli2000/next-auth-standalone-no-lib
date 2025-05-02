@@ -26,10 +26,10 @@ type AuthState = {
     isLoading: boolean;
     error: string | null;
     rememberMe: boolean;
-    login: (data: LoginFormValues) => Promise<void>;
+    login: (data: LoginFormValues) => Promise<AuthResponse>;
     register: (data: RegisterFormValues) => Promise<AuthResponse>;
-    logout: () => Promise<void>;
-    updateProfile: (data: UpdateProfileFormValues) => Promise<void>;
+    logout: () => Promise<AuthResponse>;
+    updateProfile: (data: UpdateProfileFormValues) => Promise<AuthResponse>;
     requestPasswordReset: (data: PasswordResetRequestFormValues) => Promise<AuthResponse>;
     resetPassword: (token: string, data: PasswordResetFormValues) => Promise<AuthResponse>;
     verifyEmail: (data: EmailVerificationFormValues) => Promise<AuthResponse>;
@@ -59,8 +59,12 @@ export const useAuthStore = create<AuthState>()(
                     );
 
                     set({ user: result.user, isAuthenticated: true, isLoading: false });
+                    return {
+                        success: true,
+                        user: result.user
+                    };
                 } catch (error) {
-                    handleAuthError(error, set, 'Login failed');
+                    return handleAuthError(error, set, 'Login failed');
                 }
             },
 
@@ -92,8 +96,11 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     await fetchApi('/api/auth/logout', 'POST');
                     set({ user: null, isAuthenticated: false, isLoading: false, error: null });
+                    return {
+                        success: true
+                    };
                 } catch (error) {
-                    handleAuthError(error, set, 'Logout failed');
+                    return handleAuthError(error, set, 'Logout failed');
                 }
             },
 
@@ -108,8 +115,12 @@ export const useAuthStore = create<AuthState>()(
                     );
 
                     set({ user: result.user, isLoading: false });
+                    return {
+                        success: true,
+                        user: result.user
+                    };
                 } catch (error) {
-                    handleAuthError(error, set, 'Profile update failed');
+                    return handleAuthError(error, set, 'Profile update failed');
                 }
             },
 
