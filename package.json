@@ -18,7 +18,7 @@
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
         "prepare": "husky",
-        "clean": "rm -rf .next node_modules/.cache .turbo"
+        "clean": "rm -rf .next node_modules/.cache .turbo && pnpm jest --clearCache"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.0.1",

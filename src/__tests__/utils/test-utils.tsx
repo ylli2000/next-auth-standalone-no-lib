@@ -1,7 +1,7 @@
+import { env } from '@/lib/env/envSchema';
 import { render, RenderOptions } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { ReactElement } from 'react';
-
 // Add in any providers here if needed
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
@@ -17,7 +17,7 @@ export * from '@testing-library/react';
 export { customRender as render };
 
 // Add a dummy test to avoid the "must contain at least one test" error
-if (process.env.NODE_ENV === 'testing') {
+if (env.NODE_ENV === 'testing') {
     describe('test-utils', () => {
         it('is just a utility file, no tests needed', () => {
             expect(true).toBe(true);

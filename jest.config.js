@@ -23,7 +23,14 @@ const customJestConfig = {
             }
         ]
     },
-    coveragePathIgnorePatterns: ['/node_modules/', '/__tests__/utils/', '/.next/']
+    coveragePathIgnorePatterns: ['/node_modules/', '/__tests__/utils/', '/.next/'],
+    testEnvironmentOptions: {
+        customExportConditions: [''],
+        NODE_ENV: 'testing'
+    },
+    globals: {
+        'process.env.NODE_ENV': 'testing'
+    }
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

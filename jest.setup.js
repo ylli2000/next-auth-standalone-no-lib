@@ -4,6 +4,14 @@ import '@testing-library/jest-dom';
 // Mock fetch
 import 'jest-fetch-mock';
 
+// Mock the env module
+jest.mock('@/lib/env/envSchema', () => ({
+    env: {
+        NODE_ENV: 'testing'
+        // Add other required env variables here
+    }
+}));
+
 // Mock next/router
 jest.mock('next/navigation', () => ({
     ...jest.requireActual('next/navigation'),

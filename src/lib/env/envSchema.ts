@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-    // Node environment
+    // Node environment - Using 'testing' instead of Jest's default 'test'
     NODE_ENV: z.enum(['development', 'testing', 'production']).default('development'),
 
     // Auth
@@ -55,7 +55,7 @@ function validateEnv() {
 
     if (!result.success) {
         console.error('❌ Invalid environment variables:', result.error.flatten().fieldErrors);
-        throw new Error('Invalid environment variables');
+        throw new Error('Invalid environment variables:' + JSON.stringify(result.error.flatten().fieldErrors));
     }
 
     return result.data;
