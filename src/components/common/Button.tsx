@@ -31,13 +31,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
         const variantStyles = {
             primary:
-                'bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600',
+                'bg-[rgb(var(--color-primary))] text-white hover:bg-[rgb(var(--color-primary),0.8)] focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)]',
             secondary:
-                'bg-gray-700 text-white hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 dark:bg-gray-600 dark:hover:bg-gray-700',
+                'bg-[rgb(var(--color-secondary),0.1)] text-[rgb(var(--color-secondary))] hover:bg-[rgb(var(--color-secondary),0.2)] focus:ring-2 focus:ring-[rgb(var(--color-secondary)/0.5)]',
             outline:
-                'border border-gray-600 bg-transparent text-gray-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50',
-            ghost: 'bg-transparent text-gray-200 hover:bg-gray-800 focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50',
-            link: 'bg-transparent text-blue-500 hover:underline p-0 h-auto focus:ring-0'
+                'border border-[rgb(var(--color-border))] bg-transparent text-[rgb(var(--color-foreground))] hover:bg-[rgb(var(--color-card))] focus:ring-2 focus:ring-[rgb(var(--color-border))]',
+            ghost: 'bg-transparent text-[rgb(var(--color-foreground))] hover:bg-[rgb(var(--color-card))] focus:ring-2 focus:ring-[rgb(var(--color-border))]',
+            link: 'bg-transparent text-[rgb(var(--color-primary))] hover:underline p-0 h-auto focus:ring-0'
         };
 
         const widthStyle = fullWidth ? 'w-full' : '';

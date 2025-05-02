@@ -59,54 +59,69 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-center">Reset Your Password</h1>
+            <h1 className="text-2xl font-bold mb-8 text-center text-[rgb(var(--color-foreground))]">
+                Reset Your Password
+            </h1>
             {message && (
                 <div className="mb-6">
-                    <MessageText message={message.text} variant={message.type === 'success' ? 'success' : 'error'} />
+                    <MessageText
+                        message={message.text}
+                        variant={message.type === 'success' ? 'success' : 'error'}
+                        className="text-center"
+                    />
                 </div>
             )}
 
             {isSuccess ? (
-                <div className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4 text-center">
+                <div className="bg-[rgb(var(--color-card))] p-6 rounded-lg space-y-4 text-center">
                     <p className="text-green-500 mb-4">Your password has been successfully reset!</p>
                     <button
                         onClick={handleLogin}
-                        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))]"
                     >
                         Go to Login
                     </button>
                 </div>
             ) : (
                 <>
-                    <form onSubmit={handleSubmit(onSubmit)} className="bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
-                        <p className="text-gray-400 mb-10">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="bg-[rgb(var(--color-card))] p-6 rounded-lg space-y-4"
+                    >
+                        <p className="text-[rgb(var(--color-foreground)/0.7)] mb-10">
                             You can reset your password by entering your new password and confirming it below. If you
                             did not request a password reset, please ignore this link and your password will remain
                             unchanged.
                         </p>
                         <div>
-                            <label htmlFor="password" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="password"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 New Password
                             </label>
                             <input
                                 id="password"
                                 type="password"
                                 {...register('password')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="••••••••"
                             />
                             {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
                         </div>
 
                         <div>
-                            <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="confirmPassword"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 Confirm New Password
                             </label>
                             <input
                                 id="confirmPassword"
                                 type="password"
                                 {...register('confirmPassword')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="••••••••"
                             />
                             {errors.confirmPassword && (
@@ -117,7 +132,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                         <button
                             type="submit"
                             disabled={isLoading || !isValid}
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))] disabled:opacity-50"
                         >
                             {isLoading ? 'Resetting Password...' : 'Reset Password'}
                         </button>

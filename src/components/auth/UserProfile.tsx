@@ -23,7 +23,7 @@ export default function UserProfile() {
     if (!user) {
         return (
             <div className="text-center p-8">
-                <p className="text-gray-400">Please log in to view your profile.</p>
+                <p className="text-[rgb(var(--color-foreground)/0.7)]">Please log in to view your profile.</p>
             </div>
         );
     }
@@ -59,9 +59,9 @@ export default function UserProfile() {
     return (
         <div className="max-w-2xl mx-auto space-y-8">
             {/* Profile Information Card */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] p-6 rounded-lg shadow-md">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-white">Profile Information</h2>
+                    <h2 className="text-2xl font-bold text-[rgb(var(--color-foreground))]">Profile Information</h2>
                     {!isEditing && !isPasswordEditing && (
                         <Button variant="primary" onClick={handleEditProfile} disabled={isLoading}>
                             Edit Profile
@@ -72,37 +72,43 @@ export default function UserProfile() {
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Name</label>
+                            <label className="block text-sm font-medium text-[rgb(var(--color-foreground)/0.7)] mb-1">
+                                Name
+                            </label>
                             {isEditing ? (
                                 <input
                                     ref={nameInputRef}
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                                    className="w-full bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] rounded-md px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent transition-colors"
                                     disabled={isUpdating}
                                     maxLength={50}
                                 />
                             ) : (
-                                <p className="text-white">{user.name}</p>
+                                <p className="text-[rgb(var(--color-foreground))]">{user.name}</p>
                             )}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                            <p className="text-gray-500 italic text-sm mb-1">Not editable</p>
-                            <p className="text-white">{user.email}</p>
+                            <label className="block text-sm font-medium text-[rgb(var(--color-foreground)/0.7)] mb-1">
+                                Email
+                            </label>
+                            <p className="text-[rgb(var(--color-foreground)/0.5)] italic text-sm mb-1">Not editable</p>
+                            <p className="text-[rgb(var(--color-foreground))]">{user.email}</p>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1">Role</label>
-                            <p className="text-gray-500 italic text-sm mb-1">Not editable</p>
-                            <p className="text-white capitalize">{user.role}</p>
+                            <label className="block text-sm font-medium text-[rgb(var(--color-foreground)/0.7)] mb-1">
+                                Role
+                            </label>
+                            <p className="text-[rgb(var(--color-foreground)/0.5)] italic text-sm mb-1">Not editable</p>
+                            <p className="text-[rgb(var(--color-foreground))] capitalize">{user.role}</p>
                         </div>
                     </div>
 
                     {isEditing && (
-                        <div className="flex space-x-4 pt-4 border-t border-gray-700">
+                        <div className="flex space-x-4 pt-4 border-t border-[rgb(var(--color-border))]">
                             <Button
                                 variant="primary"
                                 onClick={handleUpdateProfile}
@@ -119,7 +125,7 @@ export default function UserProfile() {
             </div>
 
             {/* Password Reset Card */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] p-6 rounded-lg shadow-md">
                 <UserResetPassword
                     isEditing={isPasswordEditing}
                     setIsEditing={setIsPasswordEditing}

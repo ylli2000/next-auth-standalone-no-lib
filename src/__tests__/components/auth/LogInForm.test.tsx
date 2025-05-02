@@ -1,4 +1,4 @@
-import LoginForm from '@/components/auth/LogInForm';
+import LoginForm from '@/components/auth/LoginForm';
 import { useAuthStore } from '@/lib/store/authStore';
 import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen } from '@testing-library/react';

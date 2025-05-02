@@ -1,34 +1,59 @@
+/* Base Tailwind CSS import for v4 */
 @import 'tailwindcss';
 
+/* Define dark mode variant for class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Theme variables */
 :root {
-    --foreground-rgb: 229, 231, 235;
-    --background-start-rgb: 17, 24, 39;
-    --background-end-rgb: 31, 41, 55;
+    --color-background: 255, 255, 255;
+    --color-foreground: 17, 24, 39;
+    --color-primary: 59, 130, 246;
+    --color-secondary: 107, 114, 128;
+    --color-accent: 139, 92, 246;
+    --color-muted: 229, 231, 235;
+    --color-border: 229, 231, 235;
+    --color-card: 249, 250, 251;
+    --color-card-foreground: 17, 24, 39;
 }
 
+/* Dark mode theme variables */
+.dark {
+    --color-background: 17, 24, 39;
+    --color-foreground: 249, 250, 251;
+    --color-primary: 96, 165, 250;
+    --color-secondary: 156, 163, 175;
+    --color-accent: 167, 139, 250;
+    --color-muted: 75, 85, 99;
+    --color-border: 55, 65, 81;
+    --color-card: 31, 41, 55;
+    --color-card-foreground: 229, 231, 235;
+}
+
+/* Base styles */
 body {
-    color: rgb(var(--foreground-rgb));
-    background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb))) fixed;
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
 }
 
-/* Default dark input styling */
+/* Form elements */
 input,
 textarea,
 select {
-    border-color: var(--color-gray-700);
-    background-color: var(--color-gray-800);
-    color: var(--color-gray-100);
+    border-color: rgb(var(--color-border));
+    background-color: rgb(var(--color-card));
+    color: rgb(var(--color-card-foreground));
 }
 
-/* Focus state for form elements */
+/* Focus states */
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: var(--color-blue-500);
-    box-shadow: 0 0 0 2px rgba(var(--color-blue-500), 0.2);
+    border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 2px rgba(var(--color-primary), 0.2);
 }
 
 /* Placeholder styling */
 ::placeholder {
-    color: var(--color-gray-500);
+    color: rgb(var(--color-muted));
 }

@@ -59,7 +59,7 @@ export default function ForgotPasswordForm({ onShowLogInForm }: ForgotPasswordFo
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Forgot Your Password?</h2>
+            <h2 className="text-2xl font-bold mb-6 text-[rgb(var(--color-foreground))]">Forgot Your Password?</h2>
             {errorMessage && (
                 <div className="mb-4">
                     <MessageText message={errorMessage} variant="error" />
@@ -88,7 +88,7 @@ export default function ForgotPasswordForm({ onShowLogInForm }: ForgotPasswordFo
                     {previewUrl && (
                         <button
                             onClick={() => window.open(previewUrl, '_blank')}
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-2"
                         >
                             Check Your Reset Link
                         </button>
@@ -97,14 +97,17 @@ export default function ForgotPasswordForm({ onShowLogInForm }: ForgotPasswordFo
             ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div>
-                        <label htmlFor="email" className="block mb-2 text-sm font-medium">
+                        <label
+                            htmlFor="email"
+                            className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                        >
                             Enter the email you used to register:
                         </label>
                         <input
                             id="email"
                             type="email"
                             {...register('email')}
-                            className="w-full rounded-md border px-3 py-2 text-gray-900"
+                            className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                             placeholder="your@email.com"
                         />
                         {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
@@ -113,15 +116,15 @@ export default function ForgotPasswordForm({ onShowLogInForm }: ForgotPasswordFo
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                        className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))] disabled:opacity-50"
                     >
                         {isLoading ? 'Sending Reset Link...' : 'Send Reset Link'}
                     </button>
                 </form>
             )}
-            <p className="mt-4 text-center text-sm text-gray-400">
+            <p className="mt-4 text-center text-sm text-[rgb(var(--color-foreground)/0.7)]">
                 Remembered your password?{' '}
-                <button onClick={onShowLogInForm} className="text-blue-500 hover:underline">
+                <button onClick={onShowLogInForm} className="text-[rgb(var(--color-primary))] hover:underline">
                     Back to login
                 </button>
             </p>

@@ -46,30 +46,35 @@ export default function VerifyEmail({ token }: VerifyEmailProps) {
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-center">Verify Your Email</h1>
+            <h1 className="text-2xl font-bold mb-8 text-center text-[rgb(var(--color-foreground))]">
+                Verify Your Email
+            </h1>
 
             {message && (
                 <div className="mb-6">
                     <MessageText
                         message={message}
                         variant={status === 'success' ? 'success' : status === 'error' ? 'error' : 'default'}
+                        className="text-center"
                     />
                 </div>
             )}
 
             {status === 'success' ? (
-                <div className="p-6 space-y-4 text-center">
-                    <p className="text-gray-400 mb-4">Your email has been verified successfully!</p>
+                <div className="bg-[rgb(var(--color-card))] p-6 rounded-lg space-y-4 text-center">
+                    <p className="text-[rgb(var(--color-foreground)/0.7)] mb-4">
+                        Your email has been verified successfully!
+                    </p>
                     <button
                         onClick={handleReturnToLogin}
-                        className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))]"
                     >
                         Return to Login
                     </button>
                 </div>
             ) : (
-                <div className="p-6 space-y-4 text-center">
-                    <p className="text-gray-400 mb-4">
+                <div className="bg-[rgb(var(--color-card))] p-6 rounded-lg space-y-4 text-center">
+                    <p className="text-[rgb(var(--color-foreground)/0.7)] mb-4">
                         {status === 'loading' ? 'Verifying your email...' : 'Please wait while we verify your email.'}
                     </p>
                 </div>

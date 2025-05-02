@@ -10,8 +10,9 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         const baseStyles = 'rounded-lg shadow-md overflow-hidden';
 
         const variantStyles = {
-            default: 'bg-gray-800 text-gray-100',
-            bordered: 'bg-gray-900 border border-gray-700 text-gray-100'
+            default: 'bg-[rgb(var(--color-card))] text-[rgb(var(--color-card-foreground))]',
+            bordered:
+                'bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-card-foreground))]'
         };
 
         const paddingStyles = {
@@ -42,7 +43,11 @@ interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
     ({ children, className = '', separator = true, ...props }, ref) => (
-        <div ref={ref} className={`mb-4 ${separator ? 'pb-3 border-b border-gray-700' : ''} ${className}`} {...props}>
+        <div
+            ref={ref}
+            className={`mb-4 ${separator ? 'pb-3 border-b border-[rgb(var(--color-border))]' : ''} ${className}`}
+            {...props}
+        >
             {children}
         </div>
     )
@@ -55,7 +60,7 @@ interface CardTitleProps extends HTMLAttributes<HTMLHeadingElement> {}
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
     ({ children, className = '', ...props }, ref) => (
-        <h3 ref={ref} className={`text-xl font-semibold text-white ${className}`} {...props}>
+        <h3 ref={ref} className={`text-xl font-semibold text-[rgb(var(--color-foreground))] ${className}`} {...props}>
             {children}
         </h3>
     )
@@ -68,7 +73,7 @@ interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
     ({ children, className = '', ...props }, ref) => (
-        <p ref={ref} className={`text-gray-400 ${className}`} {...props}>
+        <p ref={ref} className={`text-[rgb(var(--color-muted))] ${className}`} {...props}>
             {children}
         </p>
     )
@@ -94,7 +99,11 @@ interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
 
 const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
     ({ children, className = '', separator = true, ...props }, ref) => (
-        <div ref={ref} className={`mt-4 ${separator ? 'pt-3 border-t border-gray-700' : ''} ${className}`} {...props}>
+        <div
+            ref={ref}
+            className={`mt-4 ${separator ? 'pt-3 border-t border-[rgb(var(--color-border))]' : ''} ${className}`}
+            {...props}
+        >
             {children}
         </div>
     )

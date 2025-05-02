@@ -43,7 +43,7 @@ export default function UserResetPassword({ isEditing, setIsEditing, onEditStart
     if (!isEditing) {
         return (
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-white">Password</h3>
+                <h3 className="text-lg font-medium text-[rgb(var(--color-foreground))]">Password</h3>
                 <Button variant="primary" onClick={handleEditStart} disabled={isLoading}>
                     Change Password
                 </Button>
@@ -54,7 +54,7 @@ export default function UserResetPassword({ isEditing, setIsEditing, onEditStart
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-white">Change Password</h3>
+                <h3 className="text-lg font-medium text-[rgb(var(--color-foreground))]">Change Password</h3>
                 <Button
                     type="button"
                     variant="secondary"
@@ -71,11 +71,13 @@ export default function UserResetPassword({ isEditing, setIsEditing, onEditStart
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">New Password</label>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-foreground)/0.7)] mb-1">
+                            New Password
+                        </label>
                         <input
                             type="password"
                             {...register('password')}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            className="w-full bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] rounded-md px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent transition-colors"
                             disabled={isLoading}
                             maxLength={100}
                             placeholder="••••••••"
@@ -84,11 +86,13 @@ export default function UserResetPassword({ isEditing, setIsEditing, onEditStart
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-400 mb-1">Confirm New Password</label>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-foreground)/0.7)] mb-1">
+                            Confirm New Password
+                        </label>
                         <input
                             type="password"
                             {...register('confirmPassword')}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                            className="w-full bg-[rgb(var(--color-card))] border border-[rgb(var(--color-border))] rounded-md px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent transition-colors"
                             disabled={isLoading}
                             maxLength={100}
                             placeholder="••••••••"
@@ -99,7 +103,7 @@ export default function UserResetPassword({ isEditing, setIsEditing, onEditStart
                     </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-700">
+                <div className="pt-4 border-t border-[rgb(var(--color-border))]">
                     <Button type="submit" variant="primary" disabled={isLoading || !isValid}>
                         {isLoading ? 'Updating...' : 'Update Password'}
                     </Button>

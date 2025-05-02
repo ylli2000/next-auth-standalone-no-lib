@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Button } from './Button';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,24 +29,27 @@ export default function Navbar() {
     };
 
     return (
-        <nav className="fixed top-0 left-0 w-full bg-gray-800 border-b border-gray-700 z-50">
+        <nav className="fixed top-0 left-0 w-full bg-[rgb(var(--color-card))] border-b border-[rgb(var(--color-border))] z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
-                        <Link href="/" className="text-white text-xl font-bold">
+                        <Link href="/" className="text-[rgb(var(--color-foreground))] text-xl font-bold">
                             Auth Demo
                         </Link>
                     </div>
 
-                    <div className="flex items-center">
+                    <div className="flex items-center space-x-4">
+                        {/* Theme Toggle */}
+                        <ThemeToggle />
+
                         {isAuthenticated && user ? (
                             <div className="relative">
                                 <button
                                     onClick={toggleMenu}
-                                    className="flex items-center space-x-3 text-gray-300 hover:text-white focus:outline-none"
+                                    className="flex items-center space-x-3 text-[rgb(var(--color-foreground)/0.8)] hover:text-[rgb(var(--color-foreground))] focus:outline-none"
                                 >
                                     <span className="hidden md:inline-block">{userName}</span>
-                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-600 flex-shrink-0 border border-gray-500">
+                                    <div className="w-8 h-8 rounded-full overflow-hidden bg-[rgb(var(--color-muted))] flex-shrink-0 border border-[rgb(var(--color-border))]">
                                         <Image
                                             src={avatarUrl}
                                             alt={userName || 'User'}
@@ -57,15 +61,15 @@ export default function Navbar() {
                                 </button>
 
                                 {isMenuOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                                    <div className="absolute right-0 mt-2 w-48 bg-[rgb(var(--color-card))] rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
                                         <Link
                                             href="/me"
-                                            className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                                            className="block px-4 py-2 text-sm text-[rgb(var(--color-foreground))] hover:bg-[rgb(var(--color-muted))]"
                                         >
                                             Profile
                                         </Link>
                                         <button
-                                            className="block w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                                            className="block w-full text-left px-4 py-2 text-sm text-[rgb(var(--color-foreground))] hover:bg-[rgb(var(--color-muted))]"
                                             onClick={handleLogout}
                                         >
                                             Sign out

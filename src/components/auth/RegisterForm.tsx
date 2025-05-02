@@ -68,7 +68,7 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
 
     return (
         <div className="w-full max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-6">Create an Account</h2>
+            <h2 className="text-2xl font-bold mb-6 text-[rgb(var(--color-foreground))]">Create an Account</h2>
 
             {errorMessage && (
                 <div className="mb-4">
@@ -94,17 +94,19 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
 
             {isSuccess ? (
                 <div className="p-6 space-y-4 text-center">
-                    <p className="text-gray-400 mb-4">Please check your email for the verification link</p>
+                    <p className="text-[rgb(var(--color-foreground)/0.7)] mb-4">
+                        Please check your email for the verification link
+                    </p>
                     {previewUrl && (
                         <button
                             onClick={handleCheckVerification}
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                            className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))]"
                         >
                             Check Your Verification Link
                         </button>
                     )}
-                    <p className="mt-4 text-sm text-gray-400">
-                        <button onClick={onShowLogInForm} className="text-blue-500 hover:underline">
+                    <p className="mt-4 text-sm text-[rgb(var(--color-foreground)/0.7)]">
+                        <button onClick={onShowLogInForm} className="text-[rgb(var(--color-primary))] hover:underline">
                             Return to Login
                         </button>
                     </p>
@@ -113,14 +115,17 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                 <>
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div>
-                            <label htmlFor="name" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="name"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 Full Name
                             </label>
                             <input
                                 id="name"
                                 type="text"
                                 {...register('name')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="John Doe"
                             />
                             {errors.name && (
@@ -129,14 +134,17 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="email"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 Email
                             </label>
                             <input
                                 id="email"
                                 type="email"
                                 {...register('email')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="your@email.com"
                             />
                             {errors.email && (
@@ -145,14 +153,17 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="password"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 Password
                             </label>
                             <input
                                 id="password"
                                 type="password"
                                 {...register('password')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="••••••••"
                             />
                             {errors.password && (
@@ -161,14 +172,17 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                         </div>
 
                         <div>
-                            <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium">
+                            <label
+                                htmlFor="confirmPassword"
+                                className="block mb-2 text-sm font-medium text-[rgb(var(--color-foreground)/0.7)]"
+                            >
                                 Confirm Password
                             </label>
                             <input
                                 id="confirmPassword"
                                 type="password"
                                 {...register('confirmPassword')}
-                                className="w-full rounded-md border px-3 py-2 text-gray-900"
+                                className="w-full rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 py-2 text-[rgb(var(--color-foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:border-transparent"
                                 placeholder="••••••••"
                             />
                             {errors.confirmPassword && (
@@ -179,14 +193,19 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                         </div>
 
                         <div className="flex items-center">
-                            <input id="terms" type="checkbox" {...register('terms')} className="h-4 w-4 rounded" />
-                            <label htmlFor="terms" className="ml-2 text-sm">
+                            <input
+                                id="terms"
+                                type="checkbox"
+                                {...register('terms')}
+                                className="h-4 w-4 rounded border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary))] focus:ring-offset-[rgb(var(--color-background))]"
+                            />
+                            <label htmlFor="terms" className="ml-2 text-sm text-[rgb(var(--color-foreground)/0.7)]">
                                 I agree to the{' '}
-                                <a href="/terms" className="text-blue-500 hover:underline">
+                                <a href="/terms" className="text-[rgb(var(--color-primary))] hover:underline">
                                     Terms of Service
                                 </a>{' '}
                                 and{' '}
-                                <a href="/privacy" className="text-blue-500 hover:underline">
+                                <a href="/privacy" className="text-[rgb(var(--color-primary))] hover:underline">
                                     Privacy Policy
                                 </a>
                             </label>
@@ -196,15 +215,15 @@ export default function RegisterForm({ onShowLogInForm }: RegisterFormProps) {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                            className="w-full py-2 px-4 bg-[rgb(var(--color-primary))] text-white rounded-md hover:bg-[rgb(var(--color-primary),0.8)] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary)/0.5)] focus:ring-offset-[rgb(var(--color-background))] disabled:opacity-50"
                         >
                             {isLoading ? 'Creating account...' : 'Register'}
                         </button>
                     </form>
 
-                    <p className="mt-4 text-center text-sm text-gray-400">
+                    <p className="mt-4 text-center text-sm text-[rgb(var(--color-foreground)/0.7)]">
                         Already have an account?{' '}
-                        <button onClick={onShowLogInForm} className="text-blue-500 hover:underline">
+                        <button onClick={onShowLogInForm} className="text-[rgb(var(--color-primary))] hover:underline">
                             Log in
                         </button>
                     </p>
